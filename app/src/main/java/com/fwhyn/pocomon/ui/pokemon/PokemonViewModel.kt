@@ -1,13 +1,13 @@
-package com.fwhyn.pocomon.ui.dashboard
+package com.fwhyn.pocomon.ui.pokemon
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
+class PokemonViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+        value = "This is my pokemon Fragment"
     }
     val text: LiveData<String> = _text
 }

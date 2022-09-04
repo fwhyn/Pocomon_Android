@@ -12,14 +12,8 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.fwhyn.pocomon.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
-
-    <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.fwhyn.pocomon.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_my_pokemon"
+        android:name="com.fwhyn.pocomon.ui.pokemon.PokemonFragment"
+        android:label="@string/title_my_pokemon"
+        tools:layout="@layout/fragment_pokemon" />
 </navigation>
