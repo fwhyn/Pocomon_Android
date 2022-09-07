@@ -112,9 +112,9 @@
             android:layout_alignBottom="@id/pokemon_name"
             android:layout_toStartOf="@id/pokemon_image"
             android:background="@null"
-            android:drawablePadding="8dp"
             android:checked="false"
-            android:drawableBottom="@drawable/favorite_button_selector"
+            android:drawableBottom="@drawable/app_icon"
+            android:drawablePadding="8dp"
             android:paddingHorizontal="8dp"
             android:paddingBottom="10dp"
             android:textSize="0sp" />

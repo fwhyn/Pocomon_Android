@@ -44,7 +44,7 @@ class HomeFragment : Fragment() {
         pokemonsDisplayed = 0
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         viewBinding = FragmentHomeBinding.inflate(inflater, container, false)
 
         setupViews()

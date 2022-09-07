@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fwhyn.pocomon.R
 import com.fwhyn.pocomon.databinding.FragmentFavoritesBinding
@@ -38,17 +39,17 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.myFavoritePokemons.observe(viewLifecycleOwner, {
+        viewModel.myFavoritePokemons.observe(viewLifecycleOwner) {
             adapter.submitList(it)
             if (it.isEmpty()) viewBinding.emptyFavoritesLayout.visibility = View.VISIBLE
             else viewBinding.emptyFavoritesLayout.visibility = View.GONE
-        })
+        }
     }
 
     private fun setupAdapter() {
         adapter = PokeRecyclerViewAdapter(clickListener = {
-//            val action = FavoritesFragmentDirections.actionFavoritesFragmentToInfoFragment(it)
-//            Navigation.findNavController(requireView()).navigate(action)
+            val action = FavoritesFragmentDirections.actionFavoritesFragmentToInfoFragment(it)
+            Navigation.findNavController(requireView()).navigate(action)
         }, favoriteButtonClickListener = { pokemon: Pokemon, isSelected: Boolean ->
             if (isSelected) {
                 viewModel.deleteFavoritePokemon(pokemon)

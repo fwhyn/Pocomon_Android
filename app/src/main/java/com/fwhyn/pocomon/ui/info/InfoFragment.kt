@@ -106,12 +106,12 @@ class InfoFragment : Fragment() {
     }
 
     private fun setFavoriteIcon(imageView: ImageView) {
-        imageView.setImageResource(R.drawable.favorite)
+        imageView.setImageResource(R.drawable.remove_icon)
         imageView.tag = getString(R.string.favorite_tag)
     }
 
     private fun removeFavoriteIcon(imageView: ImageView) {
-        imageView.setImageResource(R.drawable.favorite_border)
+        imageView.setImageResource(R.drawable.app_icon)
         imageView.tag = getString(R.string.not_favorite_tag)
     }
 

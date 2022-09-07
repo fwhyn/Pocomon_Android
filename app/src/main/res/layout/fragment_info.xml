@@ -33,7 +33,7 @@
             android:layout_height="64dp"
             android:paddingVertical="16dp"
             android:paddingHorizontal="20dp"
-            android:src="@drawable/favorite_border"
+            android:src="@drawable/app_icon"
             android:tag="not_favorite"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
