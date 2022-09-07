@@ -74,10 +74,6 @@ class PokeRecyclerViewAdapter(
                     cardView.setCardBackgroundColor(dominantColor)
                 }
                 setPokemonImages(pokemon)
-                favoriteButton.isChecked = isPokemonFavorite(pokemon.id)
-                favoriteButton.setOnCheckedChangeListener { _, isChecked ->
-                    if(favoriteButton.isPressed) favoriteButtonClickListener(pokemon, !isChecked)
-                }
                 pokemonNumber.text = pokemonName.context.getString(R.string.pokemon_number_format, pokemon.id)
                 pokemon.name = pokemon.name.replaceFirstChar { it.uppercase() }
                 pokemonName.text = pokemon.name
