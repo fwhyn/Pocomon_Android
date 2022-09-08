@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fwhyn.pocomon.data.utils.Constants
+import com.fwhyn.pocomon.data.utils.DataConstants
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.domain.model.PokemonResults
 import com.fwhyn.pocomon.domain.model.PokemonTypeResults
@@ -48,7 +48,7 @@ class HomeViewModel(
             exception.printStackTrace()
             exception.message?.let { Log.e("fwhyn_test", it) }
         }
-        pokemonsDisplayed = 0
+        shownPokemon = 0
         getAllPokemonNames()
     }
 
@@ -102,7 +102,7 @@ class HomeViewModel(
         cancelJobIfRunning()
         job = viewModelScope.launch(coroutineExceptionHandler) {
             _myPokemonNamesList.value = Result.Loading
-            val results = Result.Success(getAllPokemonNamesUseCase.getAllPokemonNames(Constants.TOTAL_POKEMONS))
+            val results = Result.Success(getAllPokemonNamesUseCase.getAllPokemonNames(DataConstants.TOTAL_POKEMONS))
             _myPokemonNamesList.value = results
 
         }

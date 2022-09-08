@@ -17,25 +17,26 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
-class CustomDialog  /* constructor */
-    : DialogFragment() {
+class CustomDialog(private val fragmentActivity: FragmentActivity, private val dialogCallback: DialogCallback?) :
+    DialogFragment() {
     private var mTag: String? = null
-    private var mFragmentActivity: FragmentActivity? = null
     private var mBuilder: Builder? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mFragmentActivity = activity
+
         mTag = tag
-        val dialogCallback: DialogCallback?
-        /* get DialogCallback implementation from targeted activity */dialogCallback = try {
-            mFragmentActivity as DialogCallback?
-        } catch (e: ClassCastException) {
-            /*
-             * if ClassCastException occurred, it means there is no implements CustomDialog.DialogCallback
-             * then set null mActivity because there is no ClickListener implementation
-             */
-            null
-        }
+
+        /* get DialogCallback implementation from targeted activity */
+//        val dialogCallback: DialogCallback? = try {
+//            fragmentActivity as DialogCallback?
+//        } catch (e: ClassCastException) {
+//            /*
+//             * if ClassCastException occurred, it means there is no implements CustomDialog.DialogCallback
+//             * then set null mActivity because there is no ClickListener implementation
+//             */
+//            null
+//        }
         if (dialogCallback != null) {
             mBuilder = dialogCallback.onCreateDialog(mTag)
         }
@@ -75,9 +76,9 @@ class CustomDialog  /* constructor */
         /* create dialog using AlertDialog and LayoutInflater */
         val alertDialog: AlertDialog
         val builder: AlertDialog.Builder = if (themeResId != 0) {
-            AlertDialog.Builder(mFragmentActivity!!, themeResId)
+            AlertDialog.Builder(fragmentActivity, themeResId)
         } else {
-            AlertDialog.Builder(mFragmentActivity!!)
+            AlertDialog.Builder(fragmentActivity)
         }
 
         title?.let {
@@ -88,11 +89,10 @@ class CustomDialog  /* constructor */
             builder.setMessage(message)
         }
 
-        /* onClick using lambda expressions (->) */if (positiveText != null) {
+        /* onClick using lambda expressions (->) */
+        if (positiveText != null) {
             val finalPositiveButtonListener = positiveButtonListener
-            builder.setPositiveButton(
-                positiveText
-            ) { dialog: DialogInterface?, which: Int ->
+            builder.setPositiveButton(positiveText) { _, which: Int ->
                 finalPositiveButtonListener?.onClickDialog(
                     mTag,
                     which
@@ -143,7 +143,7 @@ class CustomDialog  /* constructor */
     override fun onCancel(dialog: DialogInterface) {
         /* called when dialog is showing, dialog cancelable is true, user taps outside dialog or presses back button */
         val cancelListener: CancelListener? = try {
-                mFragmentActivity as CancelListener?
+                fragmentActivity as CancelListener?
             } catch (e: ClassCastException) {
                 /*
              * if ClassCastException occurred, it means there is no implements CustomDialog.ClickListener
@@ -191,7 +191,8 @@ class CustomDialog  /* constructor */
         var customTitle: View? = null
 
         constructor() {}
-        constructor(@StyleRes themeResId: Int) {
+
+        constructor(@StyleRes themeResId: Int): this() {
             this.themeResId = themeResId
         }
 
@@ -241,6 +242,23 @@ class CustomDialog  /* constructor */
 
     companion object {
         private const val TAG = "CustomDialog"
+
+        @Volatile
+        private var INSTANCE : CustomDialog? = null
+
+        fun getInstance(fragmentActivity: FragmentActivity, dialogCallback: DialogCallback?) : CustomDialog {
+            val tempInstance = INSTANCE
+
+            if (tempInstance != null) {
+                return tempInstance
+            }
+            synchronized(this) {
+                val instance = CustomDialog(fragmentActivity, dialogCallback)
+                INSTANCE = instance
+
+                return instance
+            }
+        }
 
         /**
          * delete previous fragment with current tag if it exists

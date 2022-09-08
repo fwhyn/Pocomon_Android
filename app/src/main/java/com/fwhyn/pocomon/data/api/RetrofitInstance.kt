@@ -1,6 +1,6 @@
 package com.fwhyn.pocomon.data.api
 
-import com.fwhyn.pocomon.data.utils.Constants.Companion.BASE_URL
+import com.fwhyn.pocomon.data.utils.DataConstants.Companion.BASE_URL
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

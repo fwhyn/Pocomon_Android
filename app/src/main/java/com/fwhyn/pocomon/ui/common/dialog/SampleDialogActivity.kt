@@ -26,7 +26,7 @@ class SampleDialogActivity : AppCompatActivity(), DialogCallback, ClickListener 
         setContentView(R.layout.activity_sample_dialog)
 
         // 3. initialization dialog manager
-        mCustomDialogManager = CustomDialogManager.initDialog(this)
+        mCustomDialogManager = CustomDialogManager.initDialog(this, this)
         val dialogButton = findViewById<Button>(R.id.dialog_button)
         dialogButton.setOnClickListener { // 4. show dialog with specified tag
             mCustomDialogManager!!.showDialog(TAG_TEST_DIALOG)

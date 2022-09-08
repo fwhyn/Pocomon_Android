@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fwhyn.pocomon.data.utils.Constants
+import com.fwhyn.pocomon.data.utils.DataConstants
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.domain.model.PokemonResults
 import com.fwhyn.pocomon.domain.usecases.*
@@ -61,7 +61,7 @@ class SearchViewModel(
         viewModelScope.launch(coroutineExceptionHandler) {
             _myPokemonNamesList.value = Result.Loading
             _myPokemonNamesList.value =
-                Result.Success(getAllPokemonNamesUseCase.getAllPokemonNames(Constants.TOTAL_POKEMONS))
+                Result.Success(getAllPokemonNamesUseCase.getAllPokemonNames(DataConstants.TOTAL_POKEMONS))
         }
     }
 

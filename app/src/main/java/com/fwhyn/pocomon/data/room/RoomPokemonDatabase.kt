@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.fwhyn.pocomon.data.utils.Constants.Companion.DB_NAME
+import com.fwhyn.pocomon.data.utils.DataConstants.Companion.DB_NAME
 
 @Database(entities = [RoomPokemon::class], version = 1, exportSchema = false)
 abstract class RoomPokemonDatabase : RoomDatabase() {

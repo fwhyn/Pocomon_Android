@@ -50,12 +50,6 @@ class FavoritesFragment : Fragment() {
         adapter = PokeRecyclerViewAdapter(clickListener = {
             val action = FavoritesFragmentDirections.actionFavoritesFragmentToInfoFragment(it)
             Navigation.findNavController(requireView()).navigate(action)
-        }, favoriteButtonClickListener = { pokemon: Pokemon, isSelected: Boolean ->
-            if (isSelected) {
-                viewModel.deleteFavoritePokemon(pokemon)
-            } else {
-                viewModel.addFavoritePokemon(pokemon)
-            }
         }, false, isPokemonFavorite = {
             return@PokeRecyclerViewAdapter viewModel.isPokemonFavorite(it)
         }, null)

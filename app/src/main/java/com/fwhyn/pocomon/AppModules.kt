@@ -13,5 +13,4 @@ val appModule = module {
     viewModel { FavoritesViewModel(get(), get(), get(), get()) }
     viewModel { InfoViewModel(get(), get(), get()) }
     viewModel { SearchViewModel(get(), get(), get(), get(), get()) }
-    viewModel { CustomDialogManager() }
 }

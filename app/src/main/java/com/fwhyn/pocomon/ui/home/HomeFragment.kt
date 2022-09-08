@@ -15,29 +15,30 @@ import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fwhyn.pocomon.R
-import com.fwhyn.pocomon.data.utils.Constants
+import com.fwhyn.pocomon.data.utils.DataConstants
 import com.fwhyn.pocomon.databinding.FragmentHomeBinding
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.ui.common.recyclerview.PokeRecyclerViewAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-var pokemonsDisplayed: Int = 0
-var loading: Boolean = false
-// TODO (add maximum failure and timeout)
-var failureFlag = false
-var allTypesList: MutableList<Pokemon> = mutableListOf()
-var toLoadList: MutableList<Pokemon> = mutableListOf()
-var pagingFlag: Boolean = true
+    var shownPokemon: Int = 0
 
 class HomeFragment : Fragment() {
-    private lateinit var viewBinding: FragmentHomeBinding
+    private var loading: Boolean = false
+    private var failureFlag = false // TODO(add maximum failure and timeout)
 
-    private val viewModel by viewModel<HomeViewModel>()
+    private var allTypesList: MutableList<Pokemon> = mutableListOf()
+    private var toLoadList: MutableList<Pokemon> = mutableListOf()
+
+    private lateinit var viewBinding: FragmentHomeBinding
     private lateinit var adapter: PokeRecyclerViewAdapter
 
+    private val viewModel by viewModel<HomeViewModel>()
+
+    // lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        pokemonsDisplayed = 0
+        shownPokemon = 0
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -46,49 +47,18 @@ class HomeFragment : Fragment() {
         setupViews()
         setupObservers()
 
-//        val db = context?.let { RoomPokemonDatabase.getDatabase(it) }
-//
-//        val dbDao = db?.roomPokemonDao()
-//        GlobalScope.launch {
-//            val test = dbDao?.isPokemonSaved(1)
-//            Log.d("fwhyn_test", "onCreateView: $test")
-//        }
-
         return viewBinding.root
     }
 
-    private fun onLoadingSuccess(pokemonList: MutableList<Pokemon>, adapter: PokeRecyclerViewAdapter) {
-        with(viewBinding) {
-            shimmerLayout.stopShimmer()
-            shimmerLayout.visibility = View.GONE
-            noInternetLayout.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
-        }
-
-        adapter.submitList(pokemonList.toMutableList())
-        pokemonsDisplayed = pokemonList.size
-        loading = false
+    override fun onDestroy() {
+        super.onDestroy()
+        allTypesList.clear()
     }
 
-    private fun onLoadingFailure() {
-        with(viewBinding) {
-            if (pokemonsDisplayed == 0) noInternetLayout.visibility = View.VISIBLE
-            else Toast.makeText(context, resources.getString(R.string.check_internet_connection), Toast.LENGTH_SHORT)
-                .show()
-            shimmerLayout.stopShimmer()
-            shimmerLayout.visibility = View.GONE
-        }
-        failureFlag = true
-        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
-                    override fun onAvailable(network: Network) {
-                        onConnectionRestored()
-                    }
-                })
-            }
-        }
+    // function
+    private fun setupViews() {
+        setupAdapter(allTypesList.size)
+        showLoadingAnimation()
     }
 
     private fun setupObservers() {
@@ -96,7 +66,7 @@ class HomeFragment : Fragment() {
             when (it) {
                 is HomeViewModel.Result.Failure -> onLoadingFailure()
                 is HomeViewModel.Result.Loading -> loading = true
-                is HomeViewModel.Result.Success -> onLoadingSuccess(it.value, adapter)
+                is HomeViewModel.Result.Success -> loading = !onLoadingSuccess(it.value)
             }
         }
 
@@ -107,12 +77,12 @@ class HomeFragment : Fragment() {
                 result.value.results.forEach {
                     val trimmedUrl = it.pokemon.url?.dropLast(1)
                     it.pokemon.id = trimmedUrl!!.substring(trimmedUrl.lastIndexOf("/") + 1).toInt()
-                    if (it.pokemon.id <= Constants.TOTAL_POKEMONS) allTypesList.add(it.pokemon)
+                    if (it.pokemon.id <= DataConstants.TOTAL_POKEMONS) allTypesList.add(it.pokemon)
                 }
 
                 setupAdapter(allTypesList.size)
 
-                for (i in 0 until Constants.POKEMONS_LOAD_LIMIT) {
+                for (i in 0 until DataConstants.POKEMONS_LOAD_LIMIT) {
                     toLoadList.add(result.value.results[i].pokemon)
                 }
 
@@ -127,12 +97,12 @@ class HomeFragment : Fragment() {
                 result.value.results.forEach {
                     val trimmedUrl = it.url?.dropLast(1)
                     it.id = trimmedUrl!!.substring(trimmedUrl.lastIndexOf("/") + 1).toInt()
-                    if (it.id <= Constants.TOTAL_POKEMONS) allTypesList.add(it)
+                    if (it.id <= DataConstants.TOTAL_POKEMONS) allTypesList.add(it)
                 }
 
                 setupAdapter(allTypesList.size)
 
-                for (i in 0 until Constants.POKEMONS_LOAD_LIMIT) {
+                for (i in 0 until DataConstants.POKEMONS_LOAD_LIMIT) {
                     toLoadList.add(result.value.results[i])
                 }
                 viewModel.getPokemon(toLoadList)
@@ -140,28 +110,55 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupViews() {
-        setupAdapter(allTypesList.size)
-        showLoadingAnimation()
+    private fun onLoadingSuccess(pokemonList: MutableList<Pokemon>): Boolean {
+        with(viewBinding) {
+            shimmerLayout.stopShimmer()
+            shimmerLayout.visibility = View.GONE
+            noInternetLayout.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
+
+        adapter.submitList(pokemonList.toMutableList())
+        shownPokemon = pokemonList.size
+
+        return true
     }
+
+    private fun onLoadingFailure() {
+        with(viewBinding) {
+            if (shownPokemon == 0) noInternetLayout.visibility = View.VISIBLE
+            else Toast.makeText(context, resources.getString(R.string.check_internet_connection), Toast.LENGTH_SHORT)
+                .show()
+            shimmerLayout.stopShimmer()
+            shimmerLayout.visibility = View.GONE
+        }
+        failureFlag = true
+
+        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                    override fun onAvailable(network: Network) {
+                        onConnectionRestored()
+                    }
+                })
+            }
+        }
+    }
+
+
 
     private fun setupAdapter(lastPosition: Int) {
         adapter = PokeRecyclerViewAdapter(clickListener = {
             val action = HomeFragmentDirections.actionHomeFragmentToInfoFragment(it)
             findNavController(requireView()).navigate(action)
-        }, favoriteButtonClickListener = { pokemon: Pokemon, isSelected: Boolean ->
-            if (isSelected) {
-                viewModel.deleteFavoritePokemon(pokemon)
-            } else {
-                viewModel.addFavoritePokemon(pokemon)
-            }
         }, true, isPokemonFavorite = {
             return@PokeRecyclerViewAdapter viewModel.isPokemonFavorite(it)
         }, lastPosition)
-        setupRecycler(adapter)
+        setupRecycler()
     }
 
-    private fun setupRecycler(adapter: PokeRecyclerViewAdapter) {
+    private fun setupRecycler() {
         with(viewBinding) {
             recyclerView.adapter = adapter
             recyclerView.layoutManager =
@@ -176,32 +173,32 @@ class HomeFragment : Fragment() {
             recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
-                    if (pagingFlag) callGetPokemon()
+                        callGetPokemon()
                 }
             })
         }
     }
 
     private fun showLoadingAnimation() {
-        if (pokemonsDisplayed == 0) {
+        if (shownPokemon == 0) {
             viewBinding.shimmerLayout.startShimmer()
             viewBinding.shimmerLayout.visibility = View.VISIBLE
         }
     }
 
     private fun callGetPokemon() {
-        if (!viewBinding.recyclerView.canScrollVertically(1) && !loading && pokemonsDisplayed >= Constants.POKEMONS_LOAD_LIMIT) {
+        if (!viewBinding.recyclerView.canScrollVertically(1) && !loading && shownPokemon >= DataConstants.POKEMONS_LOAD_LIMIT) {
             toLoadList.clear()
-            if (allTypesList.size - pokemonsDisplayed >= 20) {
-                for (i in pokemonsDisplayed until pokemonsDisplayed + Constants.POKEMONS_LOAD_LIMIT) {
+            if (allTypesList.size - shownPokemon >= DataConstants.POKEMONS_DISPLAY_LIMIT) {
+                for (i in shownPokemon until shownPokemon + DataConstants.POKEMONS_LOAD_LIMIT) {
                     toLoadList.add(allTypesList[i])
                 }
-                pokemonsDisplayed += Constants.POKEMONS_LOAD_LIMIT
-            } else if (pokemonsDisplayed < allTypesList.size) {
-                for (i in pokemonsDisplayed until allTypesList.size) {
+                shownPokemon += DataConstants.POKEMONS_LOAD_LIMIT
+            } else if (shownPokemon < allTypesList.size) {
+                for (i in shownPokemon until allTypesList.size) {
                     toLoadList.add(allTypesList[i])
                 }
-                pokemonsDisplayed = allTypesList.size
+                shownPokemon = allTypesList.size
             }
             viewModel.getPokemon(toLoadList)
         }
@@ -221,10 +218,5 @@ class HomeFragment : Fragment() {
                 TODO("if pokemon list empty")
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        allTypesList.clear()
     }
 }

@@ -22,11 +22,19 @@ import com.fwhyn.pocomon.databinding.ShimmerProgressAnimationBinding
 
 class PokeRecyclerViewAdapter(
     private val clickListener: (Pokemon) -> Unit,
-    private val favoriteButtonClickListener: (Pokemon, Boolean) -> Unit,
-    var showLoadingAnimation: Boolean,
+    private var showLoadingAnimation: Boolean,
     private val isPokemonFavorite: (Int) -> Boolean,
     private val lastPosition: Int?
 ) : ListAdapter<Pokemon, PokeRecyclerViewAdapter.PokemonViewHolder>(REPO_COMPARATOR) {
+    companion object {
+        private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Pokemon>() {
+            override fun areItemsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean = oldItem.id == newItem.id
+            override fun areContentsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean = oldItem == newItem
+        }
+
+        const val LOADING_VIEW = 3
+        const val ITEM_VIEW = 1
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokemonViewHolder {
         val view: View? = null
@@ -151,15 +159,5 @@ class PokeRecyclerViewAdapter(
             return super.getItemCount() + 1
         }
         return super.getItemCount()
-    }
-
-    companion object {
-        private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Pokemon>() {
-            override fun areItemsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean =
-                oldItem.id == newItem.id
-
-            override fun areContentsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean =
-                oldItem == newItem
-        }
     }
 }

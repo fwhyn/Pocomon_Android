@@ -1,6 +1,7 @@
 package com.fwhyn.pocomon.ui.info
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
@@ -11,21 +12,27 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.domain.model.Type
-import com.fwhyn.pocomon.R
-import com.fwhyn.pocomon.databinding.FragmentInfoBinding
+import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.fwhyn.pocomon.R
+import com.fwhyn.pocomon.databinding.FragmentInfoBinding
+import com.fwhyn.pocomon.domain.model.Pokemon
+import com.fwhyn.pocomon.domain.model.Type
+import com.fwhyn.pocomon.ui.common.dialog.CustomDialog
+import com.fwhyn.pocomon.ui.common.dialog.CustomDialogManager
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.CATCH_DIALOG
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class InfoFragment : Fragment() {
+class InfoFragment : Fragment(), CustomDialog.DialogCallback, CustomDialog.ClickListener {
     private lateinit var viewBinding: FragmentInfoBinding
+    private lateinit var pokemon: Pokemon
+    private lateinit var dialogManager: CustomDialogManager
 
     private val viewModel by viewModel<InfoViewModel>()
     private var dominantColor = Color.GRAY
@@ -33,7 +40,9 @@ class InfoFragment : Fragment() {
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         (activity as AppCompatActivity?)?.supportActionBar?.setShowHideAnimationEnabled(false)
+        setObserver(activity as FragmentActivity)
     }
 
     override fun onCreateView(
@@ -42,7 +51,8 @@ class InfoFragment : Fragment() {
     ): View {
         viewBinding = FragmentInfoBinding.inflate(inflater, container, false)
         arguments?.let { bundle ->
-            setData(InfoFragmentArgs.fromBundle(bundle).pokemon)
+            pokemon = InfoFragmentArgs.fromBundle(bundle).pokemon
+            setData()
         }
         return viewBinding.root
     }
@@ -67,7 +77,11 @@ class InfoFragment : Fragment() {
             ContextCompat.getColor(requireContext(), R.color.bg_color)
     }
 
-    private fun setData(pokemon: Pokemon) {
+    private fun setObserver(fragmentActivity: FragmentActivity) {
+        dialogManager = CustomDialogManager.initDialog(fragmentActivity, this)
+    }
+
+    private fun setData() {
         with(viewBinding) {
             pokeId.text = requireContext().getString(R.string.pokemon_number_format, pokemon.id)
             pokeName.text = pokemon.name
@@ -88,31 +102,32 @@ class InfoFragment : Fragment() {
             setPokemonTypes(pokemon.types)
             if (viewModel.isPokemonFavorite(pokemon.id)) setFavoriteIcon(pokeFav)
             loadImage(pokeInfoImage, pokemon.sprites.other.official_artwork.front_default)
-            pokeFav.setOnClickListener { favoriteButtonClickListener(pokeFav, pokemon) }
+            pokeFav.setOnClickListener { favoriteButtonClickListener(pokeFav) }
             dominantColor = pokemon.dominant_color!!
             pokeScrollView.setBackgroundColor(dominantColor)
             activity?.window?.statusBarColor = dominantColor
         }
     }
 
-    private fun favoriteButtonClickListener(pokeFav : ImageView, pokemon: Pokemon){
-        if(pokeFav.tag == resources.getString(R.string.favorite_tag)){
+    private fun favoriteButtonClickListener(pokeFav : ImageView){
+        if(viewModel.caught){
             viewModel.deleteFavoritePokemon(pokemon)
             removeFavoriteIcon(pokeFav)
         } else{
+//            dialogManager.showDialog(CATCH_DIALOG)
             viewModel.addFavoritePokemon(pokemon)
-            setFavoriteIcon(pokeFav)
+            setFavoriteIcon(viewBinding.pokeFav)
         }
     }
 
     private fun setFavoriteIcon(imageView: ImageView) {
         imageView.setImageResource(R.drawable.remove_icon)
-        imageView.tag = getString(R.string.favorite_tag)
+//        imageView.tag = getString(R.string.favorite_tag)
     }
 
     private fun removeFavoriteIcon(imageView: ImageView) {
         imageView.setImageResource(R.drawable.app_icon)
-        imageView.tag = getString(R.string.not_favorite_tag)
+//        imageView.tag = getString(R.string.not_favorite_tag)
     }
 
     private fun setPokemonTypes(types : List<Type>){
@@ -153,5 +168,36 @@ class InfoFragment : Fragment() {
                 }
             })
             .into(pokeInfoImage)
+    }
+
+    // other callback
+    override fun onCreateDialog(tag: String?): CustomDialog.Builder? {
+        var builder: CustomDialog.Builder? = null
+        when (tag) {
+             CATCH_DIALOG -> {
+//                val inflater = LayoutInflater.from(activity)
+//                val updateView = inflater.inflate(R.layout.progress_layout, null)
+                builder = CustomDialog.Builder()
+                    .setTitle("test title")
+                    .setMessage("test message")
+                    .setPositiveButton("Ok", this)
+                    .setNegativeButton("Cancel", this)
+                    .setNotDefaultButtonStyle(true)
+            }
+            else -> {}
+        }
+        return builder
+    }
+
+    override fun onClickDialog(tag: String?, whichButton: Int) {
+        when (tag) {
+            CATCH_DIALOG -> when (whichButton) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    viewModel.addFavoritePokemon(pokemon)
+                    setFavoriteIcon(viewBinding.pokeFav)
+                }
+            }
+            else -> {}
+        }
     }
 }

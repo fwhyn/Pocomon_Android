@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import org.koin.core.component.KoinComponent
 import java.util.*
 
 class CustomDialogManager : ViewModel() {
@@ -47,7 +48,9 @@ class CustomDialogManager : ViewModel() {
         return data
     }
 
-    private fun callDialog(fragmentActivity: FragmentActivity) {
+    private fun callDialog(fragmentActivity: FragmentActivity, dialogCallback: CustomDialog.DialogCallback) {
+        val customDialog = CustomDialog.getInstance(fragmentActivity, dialogCallback)
+
         dialogJob.observe(fragmentActivity) {
             // get data from queue
             // getting data will be done as looping process until data = null
@@ -58,13 +61,12 @@ class CustomDialogManager : ViewModel() {
 
                 // check dialog flag whether need to be shown or dismissed
                 if (dataCommand == DO_SHOW) {
-                    val customDialog = CustomDialog()
-                    customDialog.isCancelable = false
+                    customDialog.isCancelable = true
                     customDialog.show(fragmentActivity.supportFragmentManager, dataTag)
                 }
                 if (dataCommand == DO_DISMISS) {
                     val manager = fragmentActivity.supportFragmentManager
-                    CustomDialog.Companion.dismissDialogFragment(manager, dataTag)
+                    CustomDialog.dismissDialogFragment(manager, dataTag)
                 }
             }
         }
@@ -74,9 +76,10 @@ class CustomDialogManager : ViewModel() {
         private const val DO_SHOW = "do_show"
         private const val DO_DISMISS = "do_dismiss"
 
-        fun initDialog(fragmentActivity: FragmentActivity): CustomDialogManager {
+        fun initDialog(fragmentActivity: FragmentActivity, dialogCallback: CustomDialog.DialogCallback): CustomDialogManager {
             val customDialogManager = ViewModelProvider(fragmentActivity)[CustomDialogManager::class.java]
-            customDialogManager.callDialog(fragmentActivity)
+            customDialogManager.callDialog(fragmentActivity, dialogCallback)
+
             return customDialogManager
         }
     }
