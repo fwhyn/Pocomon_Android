@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.fwhyn.pocomon.R
 import com.fwhyn.pocomon.databinding.FragmentFavoritesBinding
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.ui.common.PokeRecyclerViewAdapter
+import com.fwhyn.pocomon.ui.common.recyclerview.PokeRecyclerViewAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 

@@ -1,4 +1,4 @@
-package com.fwhyn.pocomon.ui.common
+package com.fwhyn.pocomon.ui.common.recyclerview
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -52,7 +52,6 @@ class PokeRecyclerViewAdapter(
     }
 
     inner class PokemonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         private lateinit var pokemonItemBinding: PokemonItemBinding
         private lateinit var shimmerProgressAnimationBinding: ShimmerProgressAnimationBinding
 

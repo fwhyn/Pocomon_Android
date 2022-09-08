@@ -24,7 +24,7 @@
 
     </LinearLayout>
 
-    <com.fwhyn.pocomon.ui.common.BottomFadeEdgeRecyclerView
+    <com.fwhyn.pocomon.ui.common.recyclerview.BottomFadeEdgeRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

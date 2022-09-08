@@ -1,4 +1,4 @@
-package com.fwhyn.pocomon.ui.common
+package com.fwhyn.pocomon.ui.common.recyclerview
 
 import android.content.Context
 import android.util.AttributeSet

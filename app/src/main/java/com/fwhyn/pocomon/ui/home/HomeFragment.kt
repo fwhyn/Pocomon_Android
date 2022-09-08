@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,13 +15,10 @@ import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fwhyn.pocomon.R
-import com.fwhyn.pocomon.data.room.RoomPokemonDatabase
 import com.fwhyn.pocomon.data.utils.Constants
 import com.fwhyn.pocomon.databinding.FragmentHomeBinding
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.ui.common.PokeRecyclerViewAdapter
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.fwhyn.pocomon.ui.common.recyclerview.PokeRecyclerViewAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 var pokemonsDisplayed: Int = 0
