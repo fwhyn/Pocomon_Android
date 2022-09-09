@@ -8,6 +8,7 @@ package com.fwhyn.pocomon.ui.common.dialog
 
 import android.app.Dialog
 import android.content.DialogInterface
+import android.graphics.Color.BLACK
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,8 +18,11 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
-class CustomDialog(private val fragmentActivity: FragmentActivity, private val dialogCallback: DialogCallback?) :
+class CustomDialog() :
     DialogFragment() {
+    lateinit var fragmentActivity: FragmentActivity
+    lateinit var dialogCallback: DialogCallback
+
     private var mTag: String? = null
     private var mBuilder: Builder? = null
 
@@ -131,10 +135,14 @@ class CustomDialog(private val fragmentActivity: FragmentActivity, private val d
 
         /* when button need to same as localize string, we need to disable AllCaps setting*/if (isNotDefaultButtonStyle) {
             alertDialog.setOnShowListener { thisDialog: DialogInterface ->
-                (thisDialog as AlertDialog).getButton(DialogInterface.BUTTON_POSITIVE).isAllCaps =
-                    false
-                thisDialog.getButton(DialogInterface.BUTTON_NEGATIVE).isAllCaps = false
-                thisDialog.getButton(DialogInterface.BUTTON_NEUTRAL).isAllCaps = false
+                with(thisDialog as AlertDialog) {
+                    getButton(DialogInterface.BUTTON_POSITIVE).isAllCaps =false
+                    getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(BLACK)
+                    getButton(DialogInterface.BUTTON_NEGATIVE).isAllCaps = false
+                    getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(BLACK)
+                    getButton(DialogInterface.BUTTON_NEUTRAL).isAllCaps = false
+                    getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(BLACK)
+                }
             }
         }
         return alertDialog
@@ -246,14 +254,14 @@ class CustomDialog(private val fragmentActivity: FragmentActivity, private val d
         @Volatile
         private var INSTANCE : CustomDialog? = null
 
-        fun getInstance(fragmentActivity: FragmentActivity, dialogCallback: DialogCallback?) : CustomDialog {
+        fun getInstance() : CustomDialog {
             val tempInstance = INSTANCE
 
             if (tempInstance != null) {
                 return tempInstance
             }
             synchronized(this) {
-                val instance = CustomDialog(fragmentActivity, dialogCallback)
+                val instance = CustomDialog()
                 INSTANCE = instance
 
                 return instance

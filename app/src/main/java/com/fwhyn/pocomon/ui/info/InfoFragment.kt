@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -24,6 +25,7 @@ import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.domain.model.Type
 import com.fwhyn.pocomon.ui.common.dialog.CustomDialog
 import com.fwhyn.pocomon.ui.common.dialog.CustomDialogManager
+import com.fwhyn.pocomon.ui.favorites.FavoritesFragmentDirections
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.CATCH_DIALOG
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -114,20 +116,18 @@ class InfoFragment : Fragment(), CustomDialog.DialogCallback, CustomDialog.Click
             viewModel.deleteFavoritePokemon(pokemon)
             removeFavoriteIcon(pokeFav)
         } else{
-//            dialogManager.showDialog(CATCH_DIALOG)
-            viewModel.addFavoritePokemon(pokemon)
-            setFavoriteIcon(viewBinding.pokeFav)
+            dialogManager.showDialog(CATCH_DIALOG)
+//            viewModel.addFavoritePokemon(pokemon)
+//            setFavoriteIcon(viewBinding.pokeFav)
         }
     }
 
     private fun setFavoriteIcon(imageView: ImageView) {
         imageView.setImageResource(R.drawable.remove_icon)
-//        imageView.tag = getString(R.string.favorite_tag)
     }
 
     private fun removeFavoriteIcon(imageView: ImageView) {
         imageView.setImageResource(R.drawable.app_icon)
-//        imageView.tag = getString(R.string.not_favorite_tag)
     }
 
     private fun setPokemonTypes(types : List<Type>){
@@ -175,14 +175,17 @@ class InfoFragment : Fragment(), CustomDialog.DialogCallback, CustomDialog.Click
         var builder: CustomDialog.Builder? = null
         when (tag) {
              CATCH_DIALOG -> {
-//                val inflater = LayoutInflater.from(activity)
-//                val updateView = inflater.inflate(R.layout.progress_layout, null)
-                builder = CustomDialog.Builder()
-                    .setTitle("test title")
-                    .setMessage("test message")
-                    .setPositiveButton("Ok", this)
-                    .setNegativeButton("Cancel", this)
-                    .setNotDefaultButtonStyle(true)
+                 val inflater = LayoutInflater.from(activity)
+                 val view = inflater.inflate(R.layout.dialog_caught_pokemon, null)
+                 view.findViewById<ImageView>(R.id.poke_image).setImageDrawable(viewBinding
+                     .pokeInfoImage.drawable)
+
+                 builder = CustomDialog.Builder()
+                     .setMessage("Yo caught ${pokemon.name}")
+                     .setPositiveButton("Ok", this)
+                     .setNegativeButton("Cancel", this)
+                     .setNotDefaultButtonStyle(true)
+                     .setView(view)
             }
             else -> {}
         }
@@ -195,6 +198,9 @@ class InfoFragment : Fragment(), CustomDialog.DialogCallback, CustomDialog.Click
                 DialogInterface.BUTTON_POSITIVE -> {
                     viewModel.addFavoritePokemon(pokemon)
                     setFavoriteIcon(viewBinding.pokeFav)
+
+                    val action = InfoFragmentDirections.actionInfoFragmentToFavoritesFragment()
+                    Navigation.findNavController(requireView()).navigate(action)
                 }
             }
             else -> {}

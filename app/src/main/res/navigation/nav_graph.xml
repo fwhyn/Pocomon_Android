@@ -23,6 +23,9 @@
         <argument
             android:name="pokemon"
             app:argType="com.fwhyn.pocomon.domain.model.Pokemon" />
+        <action
+            android:id="@+id/action_infoFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"

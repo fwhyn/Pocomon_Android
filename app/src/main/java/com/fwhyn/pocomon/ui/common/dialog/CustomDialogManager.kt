@@ -49,7 +49,10 @@ class CustomDialogManager : ViewModel() {
     }
 
     private fun callDialog(fragmentActivity: FragmentActivity, dialogCallback: CustomDialog.DialogCallback) {
-        val customDialog = CustomDialog.getInstance(fragmentActivity, dialogCallback)
+        val customDialog = CustomDialog.getInstance().also {
+            it.fragmentActivity = fragmentActivity
+            it.dialogCallback = dialogCallback
+        }
 
         dialogJob.observe(fragmentActivity) {
             // get data from queue

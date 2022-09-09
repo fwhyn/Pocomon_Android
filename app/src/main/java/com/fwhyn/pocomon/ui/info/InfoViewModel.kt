@@ -19,15 +19,15 @@ class InfoViewModel(
     fun addFavoritePokemon(pokemon : Pokemon){
         viewModelScope.launch {
             addFavoritePokemonUseCase.addFavoritePokemon(pokemon)
+            caught = true // TODO(change to caught = the Function
         }
-            caught = true // TODO(change to caught = theFunciton
     }
 
     fun deleteFavoritePokemon(pokemon : Pokemon){
         viewModelScope.launch {
             removeFavoritePokemonUseCase.removeFavoritePokemon(pokemon)
+            caught = false // TODO(change to caught = the Function
         }
-            caught = false // TODO(change to caught = theFunciton
     }
 
     fun isPokemonFavorite(id : Int) : Boolean{

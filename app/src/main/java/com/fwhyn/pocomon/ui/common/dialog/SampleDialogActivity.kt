@@ -40,7 +40,7 @@ class SampleDialogActivity : AppCompatActivity(), DialogCallback, ClickListener 
         when (tag) {
             TAG_TEST_DIALOG -> {
                 val inflater = LayoutInflater.from(this@SampleDialogActivity)
-                val updateView = inflater.inflate(R.layout.progress_layout, null)
+                val updateView = inflater.inflate(R.layout.dialog_progress, null)
                 builder = CustomDialog.Builder()
                     .setTitle("test title")
                     .setMessage("test message")
