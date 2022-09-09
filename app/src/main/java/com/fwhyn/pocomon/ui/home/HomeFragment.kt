@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fwhyn.pocomon.R
@@ -19,9 +18,11 @@ import com.fwhyn.pocomon.data.utils.DataConstants
 import com.fwhyn.pocomon.databinding.FragmentHomeBinding
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.ui.common.recyclerview.PokeRecyclerViewAdapter
+import com.fwhyn.pocomon.ui.launcher
+import com.fwhyn.pocomon.ui.utils.UiConstant
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-    var shownPokemon: Int = 0
+var shownPokemon: Int = 0
 
 class HomeFragment : Fragment() {
     private var loading: Boolean = false
@@ -146,15 +147,13 @@ class HomeFragment : Fragment() {
         }
     }
 
-
-
     private fun setupAdapter(lastPosition: Int) {
-        adapter = PokeRecyclerViewAdapter(clickListener = {
-            val action = HomeFragmentDirections.actionHomeFragmentToInfoFragment(it)
-            findNavController(requireView()).navigate(action)
-        }, true, isPokemonFavorite = {
-            return@PokeRecyclerViewAdapter viewModel.isPokemonFavorite(it)
-        }, lastPosition)
+        adapter = PokeRecyclerViewAdapter(
+            clickListener = { UiConstant.startInfoActivity(requireActivity(), launcher, it) },
+            true,
+            isPokemonFavorite = { return@PokeRecyclerViewAdapter viewModel.isPokemonFavorite(it) },
+            lastPosition)
+
         setupRecycler()
     }
 
@@ -215,7 +214,7 @@ class HomeFragment : Fragment() {
                 activity?.runOnUiThread { showLoadingAnimation() }
                 failureFlag = false
             } else {
-                TODO("if pokemon list empty")
+                // TODO("if pokemon list empty")
             }
         }
     }

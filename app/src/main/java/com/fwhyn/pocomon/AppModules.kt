@@ -1,5 +1,6 @@
 package com.fwhyn.pocomon
 
+import com.fwhyn.pocomon.ui.MainViewModel
 import com.fwhyn.pocomon.ui.common.dialog.CustomDialogManager
 import com.fwhyn.pocomon.ui.favorites.FavoritesViewModel
 import com.fwhyn.pocomon.ui.home.HomeViewModel
@@ -13,4 +14,5 @@ val appModule = module {
     viewModel { FavoritesViewModel(get(), get(), get(), get()) }
     viewModel { InfoViewModel(get(), get(), get()) }
     viewModel { SearchViewModel(get(), get(), get(), get(), get()) }
+    viewModel { MainViewModel() }
 }

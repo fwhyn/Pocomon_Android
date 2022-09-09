@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/homeFragment"
+        android:id="@+id/home_fragment"
         android:icon="@drawable/home"
         android:title="@string/home" />
 
     <item
-        android:id="@+id/favoritesFragment"
-        android:icon="@drawable/app_icon"
+        android:id="@+id/caught_fragment"
+        android:icon="@android:drawable/btn_star_big_on"
         android:title="@string/favorites" />
 
 </menu>

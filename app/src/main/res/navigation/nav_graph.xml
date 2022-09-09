@@ -3,11 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
-
+    app:startDestination="@id/home_fragment">
 
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/home_fragment"
         android:name="com.fwhyn.pocomon.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
@@ -25,10 +24,11 @@
             app:argType="com.fwhyn.pocomon.domain.model.Pokemon" />
         <action
             android:id="@+id/action_infoFragment_to_favoritesFragment"
-            app:destination="@id/favoritesFragment" />
+            app:destination="@id/caught_fragment"
+            app:launchSingleTop="true" />
     </fragment>
     <fragment
-        android:id="@+id/favoritesFragment"
+        android:id="@+id/caught_fragment"
         android:name="com.fwhyn.pocomon.ui.favorites.FavoritesFragment"
         android:label="fragment_favorites"
         tools:layout="@layout/fragment_favorites">
