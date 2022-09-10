@@ -151,7 +151,7 @@ class HomeFragment : Fragment() {
         adapter = PokeRecyclerViewAdapter(
             clickListener = { UiConstant.startInfoActivity(requireActivity(), launcher, it) },
             true,
-            isPokemonFavorite = { return@PokeRecyclerViewAdapter viewModel.isPokemonFavorite(it) },
+            isPokemonCaught = { return@PokeRecyclerViewAdapter viewModel.isPokemonCaught(it) },
             lastPosition)
 
         setupRecycler()

@@ -18,10 +18,10 @@ import org.koin.core.component.KoinComponent
 
 class HomeViewModel(
     private val getPokemonUseCase: GetPokemonUseCase,
-    private val addFavoritePokemonUseCase: AddFavoritePokemonUseCase,
+    private val addCaughtPokemonUseCase: AddCaughtPokemonUseCase,
     private val addPokemonUseCase: AddPokemonUseCase,
-    private val removeFavoritePokemonUseCase: RemoveFavoritePokemonUseCase,
-    private val getIsPokemonFavoriteUseCase: GetIsPokemonFavoriteUseCase,
+    private val removeCaughtPokemonUseCase: RemoveCaughtPokemonUseCase,
+    private val getIsPokemonCaughtUseCase: GetIsPokemonCaughtUseCase,
     private val getAllPokemonOfTypeUseCase: GetAllPokemonOfTypeUseCase,
     private val getAllPokemonNamesUseCase: GetAllPokemonNamesUseCase
 ) : ViewModel(), KoinComponent {
@@ -74,20 +74,20 @@ class HomeViewModel(
         }
     }
 
-    fun addFavoritePokemon(pokemon: Pokemon) {
+    fun addCaughtPokemon(pokemon: Pokemon) {
         viewModelScope.launch {
-            addFavoritePokemonUseCase.addFavoritePokemon(pokemon)
+            addCaughtPokemonUseCase.addCaughtPokemon(pokemon)
         }
     }
 
-    fun deleteFavoritePokemon(pokemon: Pokemon) {
+    fun deleteCaughtPokemon(pokemon: Pokemon) {
         viewModelScope.launch {
-            removeFavoritePokemonUseCase.removeFavoritePokemon(pokemon)
+            removeCaughtPokemonUseCase.removeCaughtPokemon(pokemon)
         }
     }
 
-    fun isPokemonFavorite(id: Int): Boolean {
-        return getIsPokemonFavoriteUseCase.isPokemonFavorite(id)
+    fun isPokemonCaught(id: Int): Boolean {
+        return getIsPokemonCaughtUseCase.isPokemonCaught(id)
     }
 
     fun getPokemonOfType(type : String) {

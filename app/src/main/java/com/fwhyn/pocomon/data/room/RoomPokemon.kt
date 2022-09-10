@@ -18,5 +18,5 @@ data class RoomPokemon(
     val genera: String,
     val description: String,
     var capture_rate: Int,
-    var is_favorite: Boolean = false,
+    var is_caught: Boolean = false,
 )

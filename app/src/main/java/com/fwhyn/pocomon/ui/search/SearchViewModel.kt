@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 class SearchViewModel(
-    private val addFavoritePokemonUseCase: AddFavoritePokemonUseCase,
-    private val removeFavoritePokemonUseCase: RemoveFavoritePokemonUseCase,
-    private val getIsPokemonFavoriteUseCase: GetIsPokemonFavoriteUseCase,
+    private val addCaughtPokemonUseCase: AddCaughtPokemonUseCase,
+    private val removeCaughtPokemonUseCase: RemoveCaughtPokemonUseCase,
+    private val getIsPokemonCaughtUseCase: GetIsPokemonCaughtUseCase,
     private val getAllPokemonNamesUseCase: GetAllPokemonNamesUseCase,
     private val getPokemonUseCase: GetPokemonUseCase
 ) : ViewModel(), KoinComponent {
@@ -41,20 +41,20 @@ class SearchViewModel(
         getAllPokemonNames()
     }
 
-    fun addFavoritePokemon(pokemon: Pokemon) {
+    fun addCaughtPokemon(pokemon: Pokemon) {
         viewModelScope.launch {
-            addFavoritePokemonUseCase.addFavoritePokemon(pokemon)
+            addCaughtPokemonUseCase.addCaughtPokemon(pokemon)
         }
     }
 
-    fun deleteFavoritePokemon(pokemon: Pokemon) {
+    fun deleteCaughtPokemon(pokemon: Pokemon) {
         viewModelScope.launch {
-            removeFavoritePokemonUseCase.removeFavoritePokemon(pokemon)
+            removeCaughtPokemonUseCase.removeCaughtPokemon(pokemon)
         }
     }
 
-    fun isPokemonFavorite(id: Int): Boolean {
-        return getIsPokemonFavoriteUseCase.isPokemonFavorite(id)
+    fun isPokemonCaught(id: Int): Boolean {
+        return getIsPokemonCaughtUseCase.isPokemonCaught(id)
     }
 
     fun getAllPokemonNames() {

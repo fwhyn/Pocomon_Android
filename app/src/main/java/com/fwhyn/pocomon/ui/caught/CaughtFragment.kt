@@ -1,4 +1,4 @@
-package com.fwhyn.pocomon.ui.favorites
+package com.fwhyn.pocomon.ui.caught
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,33 +6,30 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fwhyn.pocomon.R
-import com.fwhyn.pocomon.databinding.FragmentFavoritesBinding
-import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.ui.MainActivity
+import com.fwhyn.pocomon.databinding.FragmentCaughtBinding
 import com.fwhyn.pocomon.ui.common.recyclerview.PokeRecyclerViewAdapter
 import com.fwhyn.pocomon.ui.launcher
 import com.fwhyn.pocomon.ui.utils.UiConstant
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // TODO(add multiple removes)
-class FavoritesFragment : Fragment() {
-    private var binding: FragmentFavoritesBinding? = null
-    private lateinit var viewBinding: FragmentFavoritesBinding
+class CaughtFragment : Fragment() {
+    private var binding: FragmentCaughtBinding? = null
+    private lateinit var viewBinding: FragmentCaughtBinding
 
-    private val viewModel by viewModel<FavoritesViewModel>()
+    private val viewModel by viewModel<CaughtViewModel>()
     private lateinit var adapter: PokeRecyclerViewAdapter
 
     override fun onResume() {
         super.onResume()
-        viewModel.getFavoritePokemonList()
+        viewModel.getCaughtPokemonList()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (binding == null) {
-            binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+            binding = FragmentCaughtBinding.inflate(inflater, container, false)
         }
         viewBinding = binding!!
         setupObservers()
@@ -42,10 +39,10 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.myFavoritePokemons.observe(viewLifecycleOwner) {
+        viewModel.myCaughtPokemons.observe(viewLifecycleOwner) {
             adapter.submitList(it)
-            if (it.isEmpty()) viewBinding.emptyFavoritesLayout.visibility = View.VISIBLE
-            else viewBinding.emptyFavoritesLayout.visibility = View.GONE
+            if (it.isEmpty()) viewBinding.emptyCaughtLayout.visibility = View.VISIBLE
+            else viewBinding.emptyCaughtLayout.visibility = View.GONE
         }
     }
 
@@ -53,7 +50,7 @@ class FavoritesFragment : Fragment() {
         adapter = PokeRecyclerViewAdapter(
             clickListener = { UiConstant.startInfoActivity(requireActivity(), launcher, it) },
             false,
-            isPokemonFavorite = { return@PokeRecyclerViewAdapter viewModel.isPokemonFavorite(it) },
+            isPokemonCaught = { return@PokeRecyclerViewAdapter viewModel.isPokemonCaught(it) },
             null)
     }
 

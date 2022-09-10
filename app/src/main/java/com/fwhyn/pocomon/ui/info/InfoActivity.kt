@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -20,7 +21,12 @@ import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.domain.model.Type
 import com.fwhyn.pocomon.ui.common.dialog.CustomDialog
 import com.fwhyn.pocomon.ui.common.dialog.CustomDialogManager
-import com.fwhyn.pocomon.ui.utils.UiConstant
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.ACTIVITY_CODE_KEY
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.CATCH_DIALOG
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.DEFAULT_ACTIVITY_CODE
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.INFO_ACTIVITY_CODE
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.POKEMON_KEY
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.TAG
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 // TODO(after remove caught -> back)
@@ -32,7 +38,9 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
     private lateinit var dialogManager: CustomDialogManager
 
     private val viewModel by viewModel<InfoViewModel>()
+
     private var dominantColor = Color.GRAY
+    private var activityCode = DEFAULT_ACTIVITY_CODE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +50,21 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
         setContentView(viewBinding.root)
 
         setObserver(this)
-        intent?.getSerializableExtra(UiConstant.POKEMON_KEY)?.let {
-            pokemon = it as Pokemon
-            setData()
+
+        with(intent.extras) {
+            let {
+                this?.getSerializable(POKEMON_KEY)?.let {
+                    try {
+                        pokemon = it as Pokemon
+                        setViews()
+                    } catch (e: ClassCastException) {
+                        e.printStackTrace()
+                        Log.e(TAG, "Pokemon data is not found")
+                    }
+                }
+
+                activityCode = this?.getInt(ACTIVITY_CODE_KEY) ?: DEFAULT_ACTIVITY_CODE
+            }
         }
     }
 
@@ -52,7 +72,7 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
         dialogManager = CustomDialogManager.initDialog(fragmentActivity, this)
     }
 
-    private fun setData() {
+    private fun setViews() {
         with(viewBinding) {
             pokeId.text = getString(R.string.pokemon_number_format, pokemon.id)
             pokeName.text = pokemon.name
@@ -71,31 +91,29 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
             pokeInfoTypeOne.text = pokemon.types[0].type.name
             pokeBack.setOnClickListener { onBackPressed() }
             setPokemonTypes(pokemon.types)
-            if (viewModel.isPokemonFavorite(pokemon.id)) setFavoriteIcon(pokeFav)
+            if (viewModel.isPokemonCaught(pokemon.id)) setCaughtIcon(pokeFav)
             loadImage(pokeInfoImage, pokemon.sprites.other.official_artwork.front_default)
-            pokeFav.setOnClickListener { favoriteButtonClickListener(pokeFav) }
+            pokeFav.setOnClickListener { caughtButtonClickListener(pokeFav) }
             dominantColor = pokemon.dominant_color!!
             pokeScrollView.setBackgroundColor(dominantColor)
             window?.statusBarColor = dominantColor
         }
     }
 
-    private fun favoriteButtonClickListener(pokeFav : ImageView){
+    private fun caughtButtonClickListener(pokeFav : ImageView){
         if(viewModel.caught){
-            viewModel.deleteFavoritePokemon(pokemon)
-            removeFavoriteIcon(pokeFav)
+            viewModel.deleteCaughtPokemon(pokemon)
+            removeCaughtIcon(pokeFav)
         } else{
-            dialogManager.showDialog(UiConstant.CATCH_DIALOG)
-//            viewModel.addFavoritePokemon(pokemon)
-//            setFavoriteIcon(viewBinding.pokeFav)
+            dialogManager.showDialog(CATCH_DIALOG)
         }
     }
 
-    private fun setFavoriteIcon(imageView: ImageView) {
+    private fun setCaughtIcon(imageView: ImageView) {
         imageView.setImageResource(R.drawable.remove_icon)
     }
 
-    private fun removeFavoriteIcon(imageView: ImageView) {
+    private fun removeCaughtIcon(imageView: ImageView) {
         imageView.setImageResource(R.drawable.app_icon)
     }
 
@@ -143,7 +161,7 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
     override fun onCreateDialog(tag: String?): CustomDialog.Builder? {
         var builder: CustomDialog.Builder? = null
         when (tag) {
-            UiConstant.CATCH_DIALOG -> {
+            CATCH_DIALOG -> {
                 val inflater = LayoutInflater.from(this)
                 val view = inflater.inflate(R.layout.dialog_caught_pokemon, null)
                 view.findViewById<ImageView>(R.id.poke_image).setImageDrawable(viewBinding
@@ -163,12 +181,12 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
 
     override fun onClickDialog(tag: String?, whichButton: Int) {
         when (tag) {
-            UiConstant.CATCH_DIALOG -> when (whichButton) {
+            CATCH_DIALOG -> when (whichButton) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    viewModel.addFavoritePokemon(pokemon)
-                    setFavoriteIcon(viewBinding.pokeFav)
+                    viewModel.addCaughtPokemon(pokemon)
+                    setCaughtIcon(viewBinding.pokeFav)
 
-                    setResult(UiConstant.INFO_ACTIVITY_CODE)
+                    setResult(INFO_ACTIVITY_CODE)
                     finish()
                 }
             }

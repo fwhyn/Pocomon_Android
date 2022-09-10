@@ -9,6 +9,6 @@
     <item
         android:id="@+id/caught_fragment"
         android:icon="@android:drawable/btn_star_big_on"
-        android:title="@string/favorites" />
+        android:title="@string/caught" />
 
 </menu>

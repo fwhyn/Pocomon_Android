@@ -17,12 +17,12 @@
     <string name="height_format">%d cm</string>
     <string name="weight_format">%.1f kg</string>
     <string name="home">Home</string>
-    <string name="favorites">Favorites</string>
-    <string name="favorite_fragment">Favorite Fragment</string>
-    <string name="favorite_tag">favorite</string>
-    <string name="not_favorite_tag">not_favorite</string>
-    <string name="toast_added_to_favorites">Added %s to Favorites.</string>
-    <string name="toast_removed_from_favorites">Removed %s from Favorites.</string>
+    <string name="caught">Caught Pokémon</string>
+    <string name="caught_fragment">Caught Fragment</string>
+    <string name="caught_tag">caught</string>
+    <string name="not_caught_tag">not_caught</string>
+    <string name="toast_added_to_caught">Added %s to Caughts.</string>
+    <string name="toast_removed_from_caught">Removed %s from Caughts.</string>
     <string name="description">Description</string>
     <string name="catch_rate">Catch Rate</string>
     <string name="check_internet_connection">Check internet connection.</string>
@@ -50,7 +50,7 @@
     <string name="search">Search</string>
     <string name="search_textview_default_message">Enter the Pokémon name in the search bar to get started.</string>
     <string name="search_textview_error_message">No Pokémons found. Check the spellings and try again.</string>
-    <string name="favorites_textview_message">Click the heart-shaped icon on a Pokémon card to add it to your favorites!</string>
+    <string name="caught_textview_message">Tap Poké Ball icon on a Pokémon Information to catch it</string>
     <string name="loading">Loading</string>
     <string name="exit_message">Press Back again to Exit.</string>
 </resources>

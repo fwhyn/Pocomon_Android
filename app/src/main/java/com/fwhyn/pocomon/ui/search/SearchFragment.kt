@@ -95,10 +95,10 @@ class SearchFragment : Fragment() {
 
     private fun setupAdapter() {
         adapter = PokeRecyclerViewAdapter(clickListener = {
-            val action = SearchFragmentDirections.actionSearchFragmentToInfoFragment(it)
-            Navigation.findNavController(requireView()).navigate(action)
-        }, false, isPokemonFavorite = {
-            return@PokeRecyclerViewAdapter viewModel.isPokemonFavorite(it)
+//            val action = SearchFragmentDirections.actionSearchFragmentToInfoFragment(it)
+//            Navigation.findNavController(requireView()).navigate(action)
+        }, false, isPokemonCaught = {
+            return@PokeRecyclerViewAdapter viewModel.isPokemonCaught(it)
         }, null)
     }
 

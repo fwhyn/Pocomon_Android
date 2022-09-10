@@ -4,7 +4,7 @@ import com.fwhyn.pocomon.domain.model.*
 
 class PokemonItemConverter {
 
-    fun pokemonToRoomPokemon(pokemon: Pokemon, isFavorite: Boolean = false): RoomPokemon {
+    fun pokemonToRoomPokemon(pokemon: Pokemon, isCaught: Boolean = false): RoomPokemon {
         return RoomPokemon(
             pokemon.id,
             pokemon.base_experience,
@@ -18,7 +18,7 @@ class PokemonItemConverter {
             pokemon.genera,
             pokemon.description,
             pokemon.capture_rate,
-            isFavorite
+            isCaught
         )
     }
 

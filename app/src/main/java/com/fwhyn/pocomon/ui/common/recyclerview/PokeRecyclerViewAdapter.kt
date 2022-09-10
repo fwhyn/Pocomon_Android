@@ -23,7 +23,7 @@ import com.fwhyn.pocomon.databinding.ShimmerProgressAnimationBinding
 class PokeRecyclerViewAdapter(
     private val clickListener: (Pokemon) -> Unit,
     private var showLoadingAnimation: Boolean,
-    private val isPokemonFavorite: (Int) -> Boolean,
+    private val isPokemonCaught: (Int) -> Boolean,
     private val lastPosition: Int?
 ) : ListAdapter<Pokemon, PokeRecyclerViewAdapter.PokemonViewHolder>(REPO_COMPARATOR) {
     companion object {
