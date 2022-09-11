@@ -65,8 +65,8 @@ class HomeViewModel(
                 allLoadedPokemons.addAll(localPokemonData)
             }
 
-            val limitData = getLimitedToLoad( 0)
-            loadPokemon(limitData)
+            val limitedToLoadData = getLimitedToLoad( 0)
+            loadPokemon(limitedToLoadData)
 
             _myPokemonNamesList.value = Result.Success(allPokemonsToLoad)
         }
@@ -94,7 +94,9 @@ class HomeViewModel(
         var i = firstIndex
 
         while (toLoadList.size < DataConstants.POKEMONS_LOAD_LIMIT && i < DataConstants.TOTAL_POKEMONS) {
-            toLoadList.add(allPokemonsToLoad[i])
+            if (!isCaught(i)) {
+                toLoadList.add(allPokemonsToLoad[i])
+            }
             i++
         }
 
@@ -134,6 +136,15 @@ class HomeViewModel(
         pokemonList.forEach {
             if (it.id == pokemon.id) return true
         }
+        return false
+    }
+
+    private fun isCaught(index: Int): Boolean {
+//        allLoadedPokemons.forEach {
+//            if (it.id == allPokemonsToLoad[index].id) {
+//                return it.caught
+//            }
+//        }
         return false
     }
 

@@ -59,9 +59,7 @@ class HomeFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.myPokemonNamesList.observe(viewLifecycleOwner) {
-            if (it is HomeViewModel.Result.Success && shownPokemon != 0) {
-//                setupAdapter(it.value.size)
-            }
+            // no implementation
         }
 
         viewModel.myPokemons.observe(viewLifecycleOwner) {
@@ -155,10 +153,10 @@ class HomeFragment : Fragment() {
         if (!viewBinding.recyclerView.canScrollVertically(1) && !loading && shownPokemon >= DataConstants.POKEMONS_LOAD_LIMIT) {
             toLoadList.clear()
             with (viewModel) {
-                val limitLoad = getLimitedToLoad(shownPokemon)
+                val limitedLoadList = getLimitedToLoad(shownPokemon)
                 // if no more item to load
-                if (limitLoad.size != 0) {
-                    toLoadList.addAll(limitLoad)
+                if (limitedLoadList.size != 0) {
+                    toLoadList.addAll(limitedLoadList)
                     shownPokemon += toLoadList.size
                     loadPokemon(toLoadList)
                 }
