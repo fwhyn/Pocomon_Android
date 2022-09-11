@@ -1,15 +1,26 @@
-package com.fwhyn.pocomon.data.room
+package com.fwhyn.pocomon.data.local
 
 import com.fwhyn.pocomon.domain.model.*
 
 class PokemonItemConverter {
+    fun pokemonToRoomPokemon(pokemon: Pokemon): RoomPokemon {
+        return pokemonToRoomPokemon(pokemon, pokemon.name, false)
+    }
 
-    fun pokemonToRoomPokemon(pokemon: Pokemon, isCaught: Boolean = false): RoomPokemon {
+    fun pokemonToRoomPokemon(pokemon: Pokemon, name: String = "x"): RoomPokemon {
+        return pokemonToRoomPokemon(pokemon, name, true)
+    }
+
+    fun pokemonToRoomPokemon(pokemon: Pokemon, isCaught: Boolean): RoomPokemon {
+        return pokemonToRoomPokemon(pokemon, pokemon.name, isCaught)
+    }
+
+    private fun pokemonToRoomPokemon(pokemon: Pokemon, name: String, isCaught: Boolean = false): RoomPokemon {
         return RoomPokemon(
             pokemon.id,
             pokemon.base_experience,
             pokemon.height,
-            pokemon.name,
+            name,
             getPokemonSpritesString(pokemon.sprites),
             getPokemonStatsString(pokemon.stats),
             getPokemonTypesString(pokemon.types),

@@ -1,4 +1,4 @@
-package com.fwhyn.pocomon.data.api
+package com.fwhyn.pocomon.data.repository
 
 import com.fwhyn.pocomon.data.utils.DataConstants.Companion.BASE_URL
 import okhttp3.OkHttpClient

@@ -20,6 +20,7 @@ import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.ui.common.recyclerview.PokeRecyclerViewAdapter
 import com.fwhyn.pocomon.ui.launcher
 import com.fwhyn.pocomon.ui.utils.UiConstant
+import com.fwhyn.pocomon.ui.utils.UiUtil
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 var shownPokemon: Int = 0
@@ -149,7 +150,7 @@ class HomeFragment : Fragment() {
 
     private fun setupAdapter(lastPosition: Int) {
         adapter = PokeRecyclerViewAdapter(
-            clickListener = { UiConstant.startInfoActivity(requireActivity(), launcher, it) },
+            clickListener = { UiUtil.startInfoActivity(requireActivity(), launcher, it) },
             true,
             isPokemonCaught = { return@PokeRecyclerViewAdapter viewModel.isPokemonCaught(it) },
             lastPosition)

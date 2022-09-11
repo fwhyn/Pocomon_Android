@@ -6,8 +6,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
@@ -24,10 +27,16 @@ import com.fwhyn.pocomon.ui.common.dialog.CustomDialogManager
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.ACTIVITY_CODE_KEY
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.CATCH_DIALOG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.DEFAULT_ACTIVITY_CODE
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.DELETE_DIALOG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.INFO_ACTIVITY_CODE
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.LOADING_DIALOG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.POKEMON_KEY
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.SAVE_TAG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.TAG
+import com.fwhyn.pocomon.ui.utils.UiUtil.Companion.disableEditText
+import com.fwhyn.pocomon.ui.utils.UiUtil.Companion.enableEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 // TODO(after remove caught -> back)
 // TODO(can rename caught item)
@@ -35,7 +44,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDialog.ClickListener {
     private lateinit var viewBinding: ActivityInfoBinding
     private lateinit var pokemon: Pokemon
-    private lateinit var dialogManager: CustomDialogManager
 
     private val viewModel by viewModel<InfoViewModel>()
 
@@ -50,32 +58,88 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
         setContentView(viewBinding.root)
 
         setObserver(this)
+        init()
+        setButtons()
+    }
 
+    // functions
+    private fun setObserver(fragmentActivity: FragmentActivity) {
+        with(viewBinding) {
+            viewModel.jobs.observe(this@InfoActivity) {
+                val loading: Boolean = viewModel.jobsData[it] == true
+
+                when(it) {
+                    CATCH_DIALOG, DELETE_DIALOG -> {
+                        if (loading) {
+//                            viewModel.showDialog(LOADING_DIALOG)
+                        } else {
+//                            viewModel.dismissDialog(LOADING_DIALOG)
+                            viewModel.jobsData.remove(it)
+
+                            setResult(INFO_ACTIVITY_CODE)
+                            finish()
+                        }
+                    }
+                    else -> {
+//                        if (viewModel.jobsData.size > 0) {
+//                            viewModel.showDialog(LOADING_DIALOG)
+//                        } else {
+//                            viewModel.dismissDialog(LOADING_DIALOG)
+//                            viewModel.jobsData.remove(it)
+//                        }
+                    }
+                }
+            }
+
+            viewModel.caught.observe(this@InfoActivity) {
+                if (it) {
+                    delete.visibility = VISIBLE
+                    catchButton.visibility = GONE
+                    edit.visibility = VISIBLE
+                } else {
+                    delete.visibility = GONE
+                    catchButton.visibility = VISIBLE
+                    edit.visibility = GONE
+                }
+            }
+
+            viewModel.editMode.observe(this@InfoActivity) {
+                if (it) {
+                    save.visibility = VISIBLE
+                    enableEditText(pokeName)
+                } else {
+                    save.visibility = GONE
+                    disableEditText(pokeName)
+                }
+            }
+        }
+
+        CustomDialogManager.initDialog(fragmentActivity, this, viewModel)
+    }
+
+    private fun init() {
         with(intent.extras) {
             let {
+                activityCode = this?.getInt(ACTIVITY_CODE_KEY) ?: DEFAULT_ACTIVITY_CODE
+
                 this?.getSerializable(POKEMON_KEY)?.let {
                     try {
                         pokemon = it as Pokemon
                         setViews()
+                        viewModel.isPokemonCaught(pokemon.id)
                     } catch (e: ClassCastException) {
                         e.printStackTrace()
                         Log.e(TAG, "Pokemon data is not found")
                     }
                 }
-
-                activityCode = this?.getInt(ACTIVITY_CODE_KEY) ?: DEFAULT_ACTIVITY_CODE
             }
         }
-    }
-
-    private fun setObserver(fragmentActivity: FragmentActivity) {
-        dialogManager = CustomDialogManager.initDialog(fragmentActivity, this)
     }
 
     private fun setViews() {
         with(viewBinding) {
             pokeId.text = getString(R.string.pokemon_number_format, pokemon.id)
-            pokeName.text = pokemon.name
+            pokeName.setText(pokemon.name)
             pokeGenera.text = pokemon.genera
             pokeInfoDesc.text = pokemon.description
             pokeCaptureRate.text = pokemon.capture_rate.toString()
@@ -89,41 +153,43 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
             pokeSpecialDefense.text = pokemon.stats[4].base_stat.toString()
             pokeSpeed.text = pokemon.stats[5].base_stat.toString()
             pokeInfoTypeOne.text = pokemon.types[0].type.name
-            pokeBack.setOnClickListener { onBackPressed() }
             setPokemonTypes(pokemon.types)
-            if (viewModel.isPokemonCaught(pokemon.id)) setCaughtIcon(pokeFav)
             loadImage(pokeInfoImage, pokemon.sprites.other.official_artwork.front_default)
-            pokeFav.setOnClickListener { caughtButtonClickListener(pokeFav) }
+
+            // set theme color
             dominantColor = pokemon.dominant_color!!
             pokeScrollView.setBackgroundColor(dominantColor)
             window?.statusBarColor = dominantColor
         }
     }
 
-    private fun caughtButtonClickListener(pokeFav : ImageView){
-        if(viewModel.caught){
-            viewModel.deleteCaughtPokemon(pokemon)
-            removeCaughtIcon(pokeFav)
-        } else{
-            dialogManager.showDialog(CATCH_DIALOG)
+    private fun setButtons() {
+        with(viewBinding) {
+            catchButton.setOnClickListener {
+                viewModel.showDialog(CATCH_DIALOG)
+            }
+
+            delete.setOnClickListener {
+                viewModel.showDialog(DELETE_DIALOG)
+            }
+
+            save.setOnClickListener {
+                viewModel.renameCaughtPokemonName(pokemon, pokeName.text.toString(), SAVE_TAG)
+            }
+
+            edit.setOnClickListener {
+                viewModel.setEditMode(true)
+            }
         }
-    }
-
-    private fun setCaughtIcon(imageView: ImageView) {
-        imageView.setImageResource(R.drawable.remove_icon)
-    }
-
-    private fun removeCaughtIcon(imageView: ImageView) {
-        imageView.setImageResource(R.drawable.app_icon)
     }
 
     private fun setPokemonTypes(types : List<Type>){
         with(viewBinding){
-            if(types.size>1){
+            if(types.size > 1){
                 pokeInfoTypeTwo.text = types[1].type.name
-                pokeInfoTypeTwo.visibility = View.VISIBLE
+                pokeInfoTypeTwo.visibility = VISIBLE
             } else{
-                pokeInfoTypeTwo.visibility = View.GONE
+                pokeInfoTypeTwo.visibility = GONE
             }
         }
     }
@@ -157,7 +223,7 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
             .into(pokeInfoImage)
     }
 
-    // other callback
+    // other callbacks
     override fun onCreateDialog(tag: String?): CustomDialog.Builder? {
         var builder: CustomDialog.Builder? = null
         when (tag) {
@@ -169,10 +235,25 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
 
                 builder = CustomDialog.Builder()
                     .setMessage("Yo caught ${pokemon.name}")
-                    .setPositiveButton("Ok", this)
-                    .setNegativeButton("Cancel", this)
+                    .setPositiveButton(getString(R.string.ok), this)
+                    .setNegativeButton(getString(R.string.cancel), this)
                     .setNotDefaultButtonStyle(true)
                     .setView(view)
+            }
+            DELETE_DIALOG -> {
+                builder = CustomDialog.Builder()
+                    .setMessage(String.format(getString(R.string.delete_confirmation), pokemon.name))
+                    .setPositiveButton(getString(R.string.ok), this)
+                    .setNegativeButton(getString(R.string.cancel), this)
+                    .setNotDefaultButtonStyle(true)
+            }
+            LOADING_DIALOG -> {
+                val inflater = LayoutInflater.from(this)
+                val view = inflater.inflate(R.layout.dialog_progress, null)
+                view.findViewById<TextView>(R.id.percent).visibility = GONE
+                view.findViewById<ProgressBar>(R.id.progress_percent).visibility = GONE
+
+                builder = CustomDialog.Builder().setView(view)
             }
             else -> {}
         }
@@ -183,14 +264,15 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
         when (tag) {
             CATCH_DIALOG -> when (whichButton) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    viewModel.addCaughtPokemon(pokemon)
-                    setCaughtIcon(viewBinding.pokeFav)
-
-                    setResult(INFO_ACTIVITY_CODE)
-                    finish()
+                    viewModel.addCaughtPokemon(pokemon, tag)
                 }
             }
-            else -> {}
+            DELETE_DIALOG -> when (whichButton) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    viewModel.deleteCaughtPokemon(pokemon, tag)
+                }
+                else -> {}
+            }
         }
     }
 }

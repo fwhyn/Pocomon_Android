@@ -3,7 +3,7 @@ package com.fwhyn.pocomon.domain.usecases
 import com.fwhyn.pocomon.domain.model.FlavorTextEntry
 import com.fwhyn.pocomon.domain.model.Genera
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.domain.repository.RepositoryInterface
+import com.fwhyn.pocomon.domain.api.RepositoryInterface
 
 class GetPokemonUseCase(
     private val repository: RepositoryInterface,

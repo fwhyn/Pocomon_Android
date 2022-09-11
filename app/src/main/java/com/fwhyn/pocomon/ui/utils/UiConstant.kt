@@ -10,10 +10,14 @@ import com.fwhyn.pocomon.ui.info.InfoActivity
 class UiConstant {
     companion object{
         const val TAG = "PocomonApp"
+        const val SAVE_TAG = "save_tag"
 
         const val CATCH_DIALOG = "catch_dialog"
+        const val DELETE_DIALOG = "delete_dialog"
+        const val LOADING_DIALOG = "loading_dialog"
+
         const val POKEMON_KEY = "pokemon_key"
-        const val ACTIVITY_CODE_KEY = "pokemon_key"
+        const val ACTIVITY_CODE_KEY = "activity_code_key "
 
         // activity code
         const val DEFAULT_ACTIVITY_CODE = -1
@@ -22,24 +26,5 @@ class UiConstant {
 
         const val MIL_EXIT_DELAY = 3000L
         const val MIL_TIMER_INTERVAL = 1000L
-
-        fun startInfoActivity(activity: Activity, launcher: ActivityResultLauncher<Intent>, pokemon: Pokemon) {
-            startInfoActivity(activity, launcher, pokemon, DEFAULT_ACTIVITY_CODE)
-        }
-
-        fun startInfoActivity(activity: Activity, launcher: ActivityResultLauncher<Intent>, pokemon: Pokemon,
-                              activityCode: Int = DEFAULT_ACTIVITY_CODE) {
-            val bundle = Bundle().apply {
-                putInt(ACTIVITY_CODE_KEY, activityCode)
-
-                // I don't know why but please put this in the end of the put
-                putSerializable(POKEMON_KEY, pokemon)
-            }
-
-            val intent = Intent(activity, InfoActivity::class.java).apply {
-                putExtras(bundle)
-            }
-            launcher.launch(intent)
-        }
     }
 }

@@ -1,4 +1,4 @@
-package com.fwhyn.pocomon.data.room
+package com.fwhyn.pocomon.data.local
 
 import android.content.Context
 import androidx.room.Database
@@ -24,6 +24,7 @@ abstract class RoomPokemonDatabase : RoomDatabase() {
                     context.applicationContext,
                     RoomPokemonDatabase::class.java,
                     DB_NAME
+                    // TODO(add database versioning, or can replace db when already exist)
 //                ).allowMainThreadQueries().createFromAsset("$DB_NAME.db").fallbackToDestructiveMigration() // for
 //                migration
                 ).allowMainThreadQueries()

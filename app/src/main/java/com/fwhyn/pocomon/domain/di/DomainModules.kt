@@ -7,6 +7,8 @@ val domainModule = module {
     factory { GetPokemonUseCase(get(), get(), get()) }
     factory { AddCaughtPokemonUseCase(get()) }
     factory { RemoveCaughtPokemonUseCase(get()) }
+    factory { ModifyCaughtPokemonUseCase(get()) }
+    factory { RenameCaughtPokemonUseCase(get()) }
     factory { AddPokemonUseCase(get()) }
     factory { GetSinglePokemonUseCase(get()) }
     factory { GetCaughtPokemonListUseCase(get()) }

@@ -97,6 +97,8 @@ class CustomDialog() :
         if (positiveText != null) {
             val finalPositiveButtonListener = positiveButtonListener
             builder.setPositiveButton(positiveText) { _, which: Int ->
+                dismiss()
+
                 finalPositiveButtonListener?.onClickDialog(
                     mTag,
                     which
@@ -107,7 +109,9 @@ class CustomDialog() :
             val finalNeutralButtonListener = neutralButtonListener
             builder.setNeutralButton(
                 neutralText
-            ) { dialog: DialogInterface?, which: Int ->
+            ) { _: DialogInterface?, which: Int ->
+                dismiss()
+
                 finalNeutralButtonListener?.onClickDialog(
                     mTag,
                     which
@@ -118,7 +122,9 @@ class CustomDialog() :
             val finalNegativeButtonListener = negativeButtonListener
             builder.setNegativeButton(
                 negativeText
-            ) { dialog: DialogInterface?, which: Int ->
+            ) { _: DialogInterface?, which: Int ->
+                dismiss()
+
                 finalNegativeButtonListener?.onClickDialog(
                     mTag,
                     which
@@ -164,7 +170,7 @@ class CustomDialog() :
     }
 
     override fun show(manager: FragmentManager, tag: String?) {
-        dismissDialogFragment(manager, tag)
+        dismissDialogFragment(manager)
         super.showNow(manager, tag)
     }
 
@@ -275,6 +281,17 @@ class CustomDialog() :
             val previous = manager.findFragmentByTag(tag) as CustomDialog? ?: return
             previous.dialog ?: return
             previous.dismiss()
+        }
+
+        fun dismissDialogFragment(manager: FragmentManager) {
+            try {
+                val previous = manager.fragments as CustomDialog? ?: return
+                previous.dialog ?: return
+                previous.dismiss()
+            } catch (e: ClassCastException) {
+                Log.d(TAG, "No dialog found")
+            }
+
         }
     }
 }

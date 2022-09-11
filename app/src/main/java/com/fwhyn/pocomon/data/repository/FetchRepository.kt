@@ -1,13 +1,12 @@
 package com.fwhyn.pocomon.data.repository
 
-import com.fwhyn.pocomon.data.api.RetrofitInstance
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.domain.model.PokemonResults
 import com.fwhyn.pocomon.domain.model.PokemonTypeResults
 import com.fwhyn.pocomon.domain.model.Species
-import com.fwhyn.pocomon.domain.repository.RepositoryInterface
+import com.fwhyn.pocomon.domain.api.RepositoryInterface
 
-class Repository : RepositoryInterface {
+class FetchRepository : RepositoryInterface {
     override suspend fun getPokemon(id: Int): Pokemon {
         return RetrofitInstance.api.getPokemon(id)
     }

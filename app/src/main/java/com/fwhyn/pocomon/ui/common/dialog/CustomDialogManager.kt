@@ -10,10 +10,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import org.koin.core.component.KoinComponent
 import java.util.*
 
-class CustomDialogManager : ViewModel() {
+open class CustomDialogManager : ViewModel() {
     private val dialogJob = MutableLiveData<Deque<Array<String>>>()
 
     /* Queue is needed when show or dismiss dialog is executed when activity is onPause state
@@ -49,9 +48,9 @@ class CustomDialogManager : ViewModel() {
     }
 
     private fun callDialog(fragmentActivity: FragmentActivity, dialogCallback: CustomDialog.DialogCallback) {
-        val customDialog = CustomDialog.getInstance().also {
-            it.fragmentActivity = fragmentActivity
-            it.dialogCallback = dialogCallback
+        val customDialog = CustomDialog.getInstance().apply {
+            this.fragmentActivity = fragmentActivity
+            this.dialogCallback = dialogCallback
         }
 
         dialogJob.observe(fragmentActivity) {
@@ -69,7 +68,7 @@ class CustomDialogManager : ViewModel() {
                 }
                 if (dataCommand == DO_DISMISS) {
                     val manager = fragmentActivity.supportFragmentManager
-                    CustomDialog.dismissDialogFragment(manager, dataTag)
+                    CustomDialog.dismissDialogFragment(manager)
                 }
             }
         }
@@ -84,6 +83,16 @@ class CustomDialogManager : ViewModel() {
             customDialogManager.callDialog(fragmentActivity, dialogCallback)
 
             return customDialogManager
+        }
+
+        fun initDialog(
+            fragmentActivity: FragmentActivity,
+            dialogCallback: CustomDialog.DialogCallback,
+            viewModel: CustomDialogManager
+        ): CustomDialogManager {
+            viewModel.callDialog(fragmentActivity, dialogCallback)
+
+            return viewModel
         }
     }
 }

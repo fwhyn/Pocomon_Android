@@ -25,10 +25,9 @@ class HomeViewModel(
     private val getAllPokemonOfTypeUseCase: GetAllPokemonOfTypeUseCase,
     private val getAllPokemonNamesUseCase: GetAllPokemonNamesUseCase
 ) : ViewModel(), KoinComponent {
-
     private var coroutineExceptionHandler: CoroutineExceptionHandler
     private var job: Job = Job()
-    val list: MutableList<Pokemon> = mutableListOf()
+    private val list: MutableList<Pokemon> = mutableListOf()
 
     private val _myPokemon: MutableLiveData<Result<MutableList<Pokemon>>> = MutableLiveData()
     val myPokemon: LiveData<Result<MutableList<Pokemon>>>
