@@ -23,6 +23,8 @@ class HomeViewModel(
     private val getAllPokemonNamesUseCase: GetAllPokemonNamesUseCase,
     private val getAllLocalPokemonUseCase: GetAllLocalPokemonUseCase
 ) : ViewModel(), KoinComponent {
+    var failure = 0
+
     private var coroutineExceptionHandler: CoroutineExceptionHandler
     private var job: Job = Job()
 

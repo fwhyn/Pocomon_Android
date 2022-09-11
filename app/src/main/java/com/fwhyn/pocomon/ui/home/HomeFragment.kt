@@ -19,13 +19,13 @@ import com.fwhyn.pocomon.databinding.FragmentHomeBinding
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.ui.common.recyclerview.PokeRecyclerViewAdapter
 import com.fwhyn.pocomon.ui.launcher
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.MAX_FAILURE
 import com.fwhyn.pocomon.ui.utils.UiUtil
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class HomeFragment : Fragment() {
     private var loading: Boolean = true
-    private var failureFlag = false // TODO(add maximum failure and timeout)
 
     private var shownPokemon: Int = 0
 
@@ -85,6 +85,7 @@ class HomeFragment : Fragment() {
         adapter.submitList(pokemonList.toMutableList())
         shownPokemon = pokemonList.size
 
+        viewModel.failure = 0
         return true
     }
 
@@ -96,7 +97,7 @@ class HomeFragment : Fragment() {
             shimmerLayout.stopShimmer()
             shimmerLayout.visibility = View.GONE
         }
-        failureFlag = true
+        viewModel.failure++
 
         val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         connectivityManager.let {
@@ -151,32 +152,34 @@ class HomeFragment : Fragment() {
 
     private fun callGetPokemon() {
         if (!viewBinding.recyclerView.canScrollVertically(1) && !loading && shownPokemon >= DataConstants.POKEMONS_LOAD_LIMIT) {
-            toLoadList.clear()
-            with (viewModel) {
-                val limitedLoadList = getLimitedToLoad(shownPokemon)
-                // if no more item to load
-                if (limitedLoadList.size != 0) {
-                    toLoadList.addAll(limitedLoadList)
-                    shownPokemon += toLoadList.size
-                    loadPokemon(toLoadList)
-                }
-            }
+            tryToLoadPokemon()
         }
     }
 
     private fun onConnectionRestored() {
-        if (failureFlag) {
+        if (viewModel.failure <= MAX_FAILURE) {
             activity?.runOnUiThread {
                 viewBinding.noInternetLayout.visibility = View.GONE
             }
 
-            if (toLoadList.isNotEmpty() && !loading) {
-                viewModel.loadPokemon(toLoadList)
-                activity?.runOnUiThread { showLoadingAnimation() }
-                failureFlag = false
+            if (viewModel.allPokemonsToLoad.isNotEmpty() && !loading) {
+                tryToLoadPokemon()
             } else {
                 // TODO("if pokemon list empty")
-//                viewModel.getAllPokemonNames()
+                viewModel.getAllPokemonNames()
+            }
+        }
+    }
+
+    private fun tryToLoadPokemon() {
+        toLoadList.clear()
+        with (viewModel) {
+            val limitedLoadList = getLimitedToLoad(shownPokemon)
+            // if no more item to load
+            if (limitedLoadList.size != 0) {
+                toLoadList.addAll(limitedLoadList)
+                shownPokemon += toLoadList.size
+                loadPokemon(toLoadList)
             }
         }
     }

@@ -26,7 +26,11 @@ class UiConstant {
         const val INFO_ACTIVITY_CODE = 101
         const val CAUGHT_ACTIVITY_CODE = 102
 
+        // timer
         const val MIL_EXIT_DELAY = 3000L
         const val MIL_TIMER_INTERVAL = 1000L
+
+        // other code
+        const val MAX_FAILURE = 5
     }
 }
