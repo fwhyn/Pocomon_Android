@@ -42,9 +42,9 @@ class CaughtViewModel(
         }
     }
 
-    fun deleteCaughtPokemon(pokemon : Pokemon){
+    fun deleteCaughtPokemon(id: Int){
         viewModelScope.launch {
-            removeCaughtPokemonUseCase.removeCaughtPokemon(pokemon)
+            removeCaughtPokemonUseCase.removeCaughtPokemon(id)
             getCaughtPokemonList()
         }
     }

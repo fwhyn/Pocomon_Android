@@ -18,16 +18,12 @@ import org.koin.core.component.KoinComponent
 
 class HomeViewModel(
     private val getPokemonUseCase: GetPokemonUseCase,
-    private val addCaughtPokemonUseCase: AddCaughtPokemonUseCase,
-    private val addPokemonUseCase: AddPokemonUseCase,
-    private val removeCaughtPokemonUseCase: RemoveCaughtPokemonUseCase,
     private val getIsPokemonCaughtUseCase: GetIsPokemonCaughtUseCase,
-    private val getAllPokemonOfTypeUseCase: GetAllPokemonOfTypeUseCase,
     private val getAllPokemonNamesUseCase: GetAllPokemonNamesUseCase
 ) : ViewModel(), KoinComponent {
     private var coroutineExceptionHandler: CoroutineExceptionHandler
     private var job: Job = Job()
-    private val list: MutableList<Pokemon> = mutableListOf()
+    private val pokemonList: MutableList<Pokemon> = mutableListOf()
 
     private val _myPokemon: MutableLiveData<Result<MutableList<Pokemon>>> = MutableLiveData()
     val myPokemon: LiveData<Result<MutableList<Pokemon>>>
@@ -58,30 +54,17 @@ class HomeViewModel(
             coroutineScope {
                 pokemonList.forEach {
                     launch(coroutineExceptionHandler) {
-                        if (!checkIfContainsPokemon(list, it)) {
+                        if (!checkIfContainsPokemon(this@HomeViewModel.pokemonList, it)) {
+                            // get pokemon from local or repository
                             val pokemon = getPokemonUseCase.getPokemon(it.id)
-                            list.add(pokemon)
-                            viewModelScope.launch {
-                                addPokemonUseCase.addPokemon(pokemon)
-                            }
+                            // add pokemon list to viewmodel object
+                            this@HomeViewModel.pokemonList.add(pokemon)
                         }
                     }
                 }
             }
-            list.sortBy { it.id }
-            _myPokemon.value = Result.Success(list)
-        }
-    }
-
-    fun addCaughtPokemon(pokemon: Pokemon) {
-        viewModelScope.launch {
-            addCaughtPokemonUseCase.addCaughtPokemon(pokemon)
-        }
-    }
-
-    fun deleteCaughtPokemon(pokemon: Pokemon) {
-        viewModelScope.launch {
-            removeCaughtPokemonUseCase.removeCaughtPokemon(pokemon)
+            this@HomeViewModel.pokemonList.sortBy { it.id }
+            _myPokemon.value = Result.Success(this@HomeViewModel.pokemonList)
         }
     }
 
@@ -89,19 +72,14 @@ class HomeViewModel(
         return getIsPokemonCaughtUseCase.isPokemonCaught(id)
     }
 
-    fun getPokemonOfType(type : String) {
-        cancelJobIfRunning()
-        job = viewModelScope.launch(coroutineExceptionHandler) {
-            _myTypePokemon.value = Result.Loading
-            _myTypePokemon.value = Result.Success(getAllPokemonOfTypeUseCase.getAllPokemonOfType(type))
-        }
-    }
-
-    fun getAllPokemonNames() {
+    private fun getAllPokemonNames() {
         cancelJobIfRunning()
         job = viewModelScope.launch(coroutineExceptionHandler) {
             _myPokemonNamesList.value = Result.Loading
+
+            // get from https://pokeapi.co/api/v2/TOTAL_POKEMONS
             val results = Result.Success(getAllPokemonNamesUseCase.getAllPokemonNames(DataConstants.TOTAL_POKEMONS))
+
             _myPokemonNamesList.value = results
 
         }

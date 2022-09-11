@@ -47,12 +47,6 @@ class SearchViewModel(
         }
     }
 
-    fun deleteCaughtPokemon(pokemon: Pokemon) {
-        viewModelScope.launch {
-            removeCaughtPokemonUseCase.removeCaughtPokemon(pokemon)
-        }
-    }
-
     fun isPokemonCaught(id: Int): Boolean {
         return getIsPokemonCaughtUseCase.isPokemonCaught(id)
     }

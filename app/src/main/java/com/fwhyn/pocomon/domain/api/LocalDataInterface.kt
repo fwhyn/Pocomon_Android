@@ -2,9 +2,9 @@ package com.fwhyn.pocomon.domain.api
 
 import com.fwhyn.pocomon.domain.model.Pokemon
 
-interface RoomRepositoryInterface {
+interface LocalDataInterface {
     suspend fun addCaughtPokemon(pokemon: Pokemon): Boolean
-    suspend fun removeCaughtPokemon(pokemon: Pokemon): Boolean
+    suspend fun removeCaughtPokemon(id: Int): Boolean
     suspend fun addPokemon(pokemon: Pokemon): Boolean
     suspend fun modifyCaughtPokemon(pokemon: Pokemon): Boolean
     suspend fun renameCaughtPokemon(pokemon: Pokemon, name: String): Boolean

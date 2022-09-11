@@ -3,6 +3,7 @@ package com.fwhyn.pocomon.data.local
 import com.fwhyn.pocomon.domain.model.*
 
 class PokemonItemConverter {
+    // pokemon to room
     fun pokemonToRoomPokemon(pokemon: Pokemon): RoomPokemon {
         return pokemonToRoomPokemon(pokemon, pokemon.name, false)
     }
@@ -33,6 +34,7 @@ class PokemonItemConverter {
         )
     }
 
+    // room to pokemon
     fun roomPokemonToPokemon(roomPokemon: RoomPokemon) : Pokemon {
         return Pokemon(
             roomPokemon.base_experience,
@@ -50,6 +52,7 @@ class PokemonItemConverter {
         )
     }
 
+    // other functions
     private fun getPokemonSpritesString(sprites: Sprites) : String {
         return sprites.other.official_artwork.front_default
     }

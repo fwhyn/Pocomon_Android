@@ -269,7 +269,7 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
             }
             DELETE_DIALOG -> when (whichButton) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    viewModel.deleteCaughtPokemon(pokemon, tag)
+                    viewModel.removeCaughtPokemon(pokemon.id, tag)
                 }
                 else -> {}
             }

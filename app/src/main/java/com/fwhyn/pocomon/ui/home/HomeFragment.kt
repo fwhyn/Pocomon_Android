@@ -97,6 +97,7 @@ class HomeFragment : Fragment() {
                 toLoadList.clear()
 
                 result.value.results.forEach {
+                    // remove "/" in url
                     val trimmedUrl = it.url?.dropLast(1)
                     it.id = trimmedUrl!!.substring(trimmedUrl.lastIndexOf("/") + 1).toInt()
                     if (it.id <= DataConstants.TOTAL_POKEMONS) allTypesList.add(it)

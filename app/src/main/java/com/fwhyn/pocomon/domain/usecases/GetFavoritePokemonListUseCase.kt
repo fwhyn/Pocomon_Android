@@ -1,8 +1,8 @@
 package com.fwhyn.pocomon.domain.usecases
 
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.domain.api.RoomRepositoryInterface
+import com.fwhyn.pocomon.domain.api.LocalDataInterface
 
-class GetCaughtPokemonListUseCase(private val roomRepositoryInterface: RoomRepositoryInterface) {
-    suspend fun getCaughtPokemonList() : List<Pokemon> = roomRepositoryInterface.getCaughtPokemonList()
+class GetCaughtPokemonListUseCase(private val localDataInterface: LocalDataInterface) {
+    suspend fun getCaughtPokemonList() : List<Pokemon> = localDataInterface.getCaughtPokemonList()
 }

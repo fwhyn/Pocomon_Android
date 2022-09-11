@@ -1,9 +1,9 @@
 package com.fwhyn.pocomon.data.local
 
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.domain.api.RoomRepositoryInterface
+import com.fwhyn.pocomon.domain.api.LocalDataInterface
 
-class FetchRoomPokemon(private val pokemonDao: RoomPokemonDao) : RoomRepositoryInterface {
+class FetchRoomPokemon(private val pokemonDao: RoomPokemonDao) : LocalDataInterface {
     private val pokemonItemConverter = PokemonItemConverter()
 
     override suspend fun addCaughtPokemon(pokemon: Pokemon): Boolean {
@@ -12,8 +12,8 @@ class FetchRoomPokemon(private val pokemonDao: RoomPokemonDao) : RoomRepositoryI
         return true
     }
 
-    override suspend fun removeCaughtPokemon(pokemon: Pokemon): Boolean {
-        pokemonDao.modifyCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon, false))
+    override suspend fun removeCaughtPokemon(id: Int): Boolean {
+        pokemonDao.removePokemonItem(id)
 
         return true
     }

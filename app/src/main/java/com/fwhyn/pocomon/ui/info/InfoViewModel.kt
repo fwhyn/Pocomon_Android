@@ -50,12 +50,12 @@ class InfoViewModel(
         }
     }
 
-    fun deleteCaughtPokemon(pokemon: Pokemon, owner: String) {
+    fun removeCaughtPokemon(id: Int, owner: String) {
         viewModelScope.launch {
             setJob(owner, true)
 
 //            delay(2000)
-            removeCaughtPokemonUseCase.removeCaughtPokemon(pokemon)
+            removeCaughtPokemonUseCase.removeCaughtPokemon(id)
             caught.value = false // TODO(change to caught = return the Function)
 
             setJob(owner, false)

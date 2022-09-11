@@ -5,7 +5,7 @@ import com.fwhyn.pocomon.domain.model.PokemonResults
 import com.fwhyn.pocomon.domain.model.PokemonTypeResults
 import com.fwhyn.pocomon.domain.model.Species
 
-interface RepositoryInterface {
+interface RepositoryDataInterface {
     suspend fun getPokemon(id: Int): Pokemon
     suspend fun getSpecies(id: Int): Species
     suspend fun getPokemonList(limit: Int): PokemonResults

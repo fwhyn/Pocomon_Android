@@ -14,6 +14,9 @@ interface RoomPokemonDao {
     @Update
     suspend fun modifyCaughtPokemon(pokemon: RoomPokemon)
 
+    @Query("DELETE FROM pokemon_list WHERE id = :id")
+    suspend fun removePokemonItem(id: Int)
+
     @Query("SELECT * FROM pokemon_list WHERE is_caught = 1 ORDER BY id ASC")
     fun readCaughtItems(): List<RoomPokemon>
 

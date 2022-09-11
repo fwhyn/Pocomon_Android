@@ -3,10 +3,10 @@ package com.fwhyn.pocomon.domain.usecases
 import com.fwhyn.pocomon.domain.model.FlavorTextEntry
 import com.fwhyn.pocomon.domain.model.Genera
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.domain.api.RepositoryInterface
+import com.fwhyn.pocomon.domain.api.RepositoryDataInterface
 
 class GetPokemonUseCase(
-    private val repository: RepositoryInterface,
+    private val repository: RepositoryDataInterface,
     private val getSinglePokemonUseCase: GetSinglePokemonUseCase,
     private val getIsPokemonSavedUseCase: GetIsPokemonSavedUseCase
 ) {
