@@ -19,17 +19,16 @@ import com.fwhyn.pocomon.databinding.FragmentHomeBinding
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.ui.common.recyclerview.PokeRecyclerViewAdapter
 import com.fwhyn.pocomon.ui.launcher
-import com.fwhyn.pocomon.ui.utils.UiConstant
 import com.fwhyn.pocomon.ui.utils.UiUtil
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-var shownPokemon: Int = 0
 
 class HomeFragment : Fragment() {
-    private var loading: Boolean = false
+    private var loading: Boolean = true
     private var failureFlag = false // TODO(add maximum failure and timeout)
 
-    private var allTypesList: MutableList<Pokemon> = mutableListOf()
+    private var shownPokemon: Int = 0
+
     private var toLoadList: MutableList<Pokemon> = mutableListOf()
 
     private lateinit var viewBinding: FragmentHomeBinding
@@ -52,63 +51,19 @@ class HomeFragment : Fragment() {
         return viewBinding.root
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        allTypesList.clear()
-    }
-
     // function
     private fun setupViews() {
-        setupAdapter(allTypesList.size)
         showLoadingAnimation()
+        setupAdapter()
+        setupRecycler()
     }
 
     private fun setupObservers() {
-        viewModel.myPokemon.observe(viewLifecycleOwner) {
+        viewModel.myPokemons.observe(viewLifecycleOwner) {
             when (it) {
                 is HomeViewModel.Result.Failure -> onLoadingFailure()
-                is HomeViewModel.Result.Loading -> loading = true
+                HomeViewModel.Result.Loading -> loading = true
                 is HomeViewModel.Result.Success -> loading = !onLoadingSuccess(it.value)
-            }
-        }
-
-        viewModel.myTypePokemon.observe(viewLifecycleOwner) { result ->
-            if (result is HomeViewModel.Result.Success && allTypesList.isEmpty()) {
-                toLoadList.clear()
-
-                result.value.results.forEach {
-                    val trimmedUrl = it.pokemon.url?.dropLast(1)
-                    it.pokemon.id = trimmedUrl!!.substring(trimmedUrl.lastIndexOf("/") + 1).toInt()
-                    if (it.pokemon.id <= DataConstants.TOTAL_POKEMONS) allTypesList.add(it.pokemon)
-                }
-
-                setupAdapter(allTypesList.size)
-
-                for (i in 0 until DataConstants.POKEMONS_LOAD_LIMIT) {
-                    toLoadList.add(result.value.results[i].pokemon)
-                }
-
-                viewModel.getPokemon(toLoadList)
-            }
-        }
-
-        viewModel.myPokemonNamesList.observe(viewLifecycleOwner) { result ->
-            if (result is HomeViewModel.Result.Success && allTypesList.isEmpty()) {
-                toLoadList.clear()
-
-                result.value.results.forEach {
-                    // remove "/" in url
-                    val trimmedUrl = it.url?.dropLast(1)
-                    it.id = trimmedUrl!!.substring(trimmedUrl.lastIndexOf("/") + 1).toInt()
-                    if (it.id <= DataConstants.TOTAL_POKEMONS) allTypesList.add(it)
-                }
-
-                setupAdapter(allTypesList.size)
-
-                for (i in 0 until DataConstants.POKEMONS_LOAD_LIMIT) {
-                    toLoadList.add(result.value.results[i])
-                }
-                viewModel.getPokemon(toLoadList)
             }
         }
     }
@@ -149,19 +104,18 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupAdapter(lastPosition: Int) {
+    private fun setupAdapter() {
         adapter = PokeRecyclerViewAdapter(
             clickListener = { UiUtil.startInfoActivity(requireActivity(), launcher, it) },
             true,
             isPokemonCaught = { return@PokeRecyclerViewAdapter viewModel.isPokemonCaught(it) },
-            lastPosition)
-
-        setupRecycler()
+            lastPosition = viewModel.allPokemonsToLoad.size)
     }
 
     private fun setupRecycler() {
         with(viewBinding) {
             recyclerView.adapter = adapter
+
             recyclerView.layoutManager =
                 GridLayoutManager(context, resources.getInteger(R.integer.grid_column_count))
             recyclerView.setBackgroundColor(
@@ -190,18 +144,20 @@ class HomeFragment : Fragment() {
     private fun callGetPokemon() {
         if (!viewBinding.recyclerView.canScrollVertically(1) && !loading && shownPokemon >= DataConstants.POKEMONS_LOAD_LIMIT) {
             toLoadList.clear()
-            if (allTypesList.size - shownPokemon >= DataConstants.POKEMONS_DISPLAY_LIMIT) {
-                for (i in shownPokemon until shownPokemon + DataConstants.POKEMONS_LOAD_LIMIT) {
-                    toLoadList.add(allTypesList[i])
+            with (viewModel) {
+                if (allPokemonsToLoad.size - shownPokemon >= DataConstants.POKEMONS_DISPLAY_LIMIT) {
+                    for (i in shownPokemon until shownPokemon + DataConstants.POKEMONS_LOAD_LIMIT) {
+                        toLoadList.add(allPokemonsToLoad[i])
+                    }
+                    shownPokemon += DataConstants.POKEMONS_LOAD_LIMIT
+                } else if (shownPokemon < allPokemonsToLoad.size) {
+                    for (i in shownPokemon until allPokemonsToLoad.size) {
+                        toLoadList.add(allPokemonsToLoad[i])
+                    }
+                    shownPokemon = allPokemonsToLoad.size
                 }
-                shownPokemon += DataConstants.POKEMONS_LOAD_LIMIT
-            } else if (shownPokemon < allTypesList.size) {
-                for (i in shownPokemon until allTypesList.size) {
-                    toLoadList.add(allTypesList[i])
-                }
-                shownPokemon = allTypesList.size
+                loadPokemon(toLoadList)
             }
-            viewModel.getPokemon(toLoadList)
         }
     }
 
@@ -212,7 +168,7 @@ class HomeFragment : Fragment() {
             }
 
             if (toLoadList.isNotEmpty()) {
-                viewModel.getPokemon(toLoadList)
+                viewModel.loadPokemon(toLoadList)
                 activity?.runOnUiThread { showLoadingAnimation() }
                 failureFlag = false
             } else {
