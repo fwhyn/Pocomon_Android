@@ -1,5 +1,6 @@
 package com.fwhyn.pocomon.domain.usecases
 
+import com.fwhyn.pocomon.data.utils.DataConstants.Companion.DEFAULT_CAPTURE_RATE
 import com.fwhyn.pocomon.domain.model.FlavorTextEntry
 import com.fwhyn.pocomon.domain.model.Genera
 import com.fwhyn.pocomon.domain.model.Pokemon
@@ -20,7 +21,8 @@ class GetPokemonUseCase(
             val species = repository.getSpecies(id)
             pokemon.genera = getPokemonGenera(species.genera)
             pokemon.description = getPokemonDescription(species.flavor_text_entries)
-            pokemon.capture_rate = species.capture_rate
+            pokemon.capture_rate = DEFAULT_CAPTURE_RATE
+//            pokemon.capture_rate = species.capture_rate
             pokemon
         }
     }

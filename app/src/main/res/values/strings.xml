@@ -59,7 +59,7 @@
     <string name="xxx_cm">xxx cm</string>
     <string name="xx_kg">xx kg</string>
     <string name="delete_confirmation">Are you sure want to delete %s</string>
-    <string name="catch_failed_message">Failed to catch %s.\nCatch again?</string>
+    <string name="catch_failed_message">Failed to catch %s</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
 </resources>

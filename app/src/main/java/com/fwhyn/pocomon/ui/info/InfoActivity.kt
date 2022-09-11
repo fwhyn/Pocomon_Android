@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -27,6 +28,7 @@ import com.fwhyn.pocomon.ui.common.dialog.CustomDialogManager
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.ACTIVITY_CODE_KEY
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.CATCH_DIALOG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.CATCH_FAILED_DIALOG
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.CAUGHT_ACTIVITY_CODE
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.DEFAULT_ACTIVITY_CODE
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.DELETE_DIALOG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.INFO_ACTIVITY_CODE
@@ -97,11 +99,9 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
                 if (it) {
                     delete.visibility = VISIBLE
                     catchButton.visibility = GONE
-                    edit.visibility = VISIBLE
                 } else {
                     delete.visibility = GONE
                     catchButton.visibility = VISIBLE
-                    edit.visibility = GONE
                 }
             }
 
@@ -141,7 +141,7 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
     private fun setViews() {
         with(viewBinding) {
             pokeId.text = getString(R.string.pokemon_number_format, pokemon.id)
-            pokeName.setText(pokemon.name)
+            setName(viewBinding)
             pokeGenera.text = pokemon.genera
             pokeInfoDesc.text = pokemon.description
             pokeCaptureRate.text = pokemon.capture_rate.toString()
@@ -157,6 +157,9 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
             pokeInfoTypeOne.text = pokemon.types[0].type.name
             setPokemonTypes(pokemon.types)
             loadImage(pokeInfoImage, pokemon.sprites.other.official_artwork.front_default)
+
+            // buttons
+            setEditButton(viewBinding)
 
             // set theme color
             dominantColor = pokemon.dominant_color!!
@@ -188,6 +191,21 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
             edit.setOnClickListener {
                 viewModel.setEditMode(true)
             }
+        }
+    }
+    private fun setName(viewBinding: ActivityInfoBinding) {
+        if (activityCode == CAUGHT_ACTIVITY_CODE) {
+            viewBinding.pokeName.setText(pokemon.custom_name)
+        } else {
+            viewBinding.pokeName.setText(pokemon.name)
+        }
+    }
+
+    private fun setEditButton(viewBinding: ActivityInfoBinding) {
+        if (activityCode == CAUGHT_ACTIVITY_CODE) {
+            viewBinding.edit.visibility = VISIBLE
+        } else {
+            viewBinding.edit.visibility = GONE
         }
     }
 
@@ -267,7 +285,6 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
                 builder = CustomDialog.Builder()
                     .setMessage(String.format(getString(R.string.catch_failed_message), pokemon.name))
                     .setPositiveButton(getString(R.string.ok), this)
-                    .setNegativeButton(getString(R.string.cancel), this)
                     .setNotDefaultButtonStyle(true)
             }
             else -> {}
@@ -290,7 +307,7 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
             }
             CATCH_FAILED_DIALOG -> when (whichButton) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    viewModel.addCaughtPokemon(pokemon, tag)
+//                    viewModel.addCaughtPokemon(pokemon, tag)
                 }
                 else -> {}
             }

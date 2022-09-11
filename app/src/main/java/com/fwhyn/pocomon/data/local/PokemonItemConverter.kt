@@ -1,6 +1,5 @@
 package com.fwhyn.pocomon.data.local
 
-import com.fwhyn.pocomon.data.utils.DataConstants.Companion.DEFAULT_CAPTURE_RATE
 import com.fwhyn.pocomon.domain.model.*
 
 class PokemonItemConverter {
@@ -30,7 +29,7 @@ class PokemonItemConverter {
             pokemon.dominant_color,
             pokemon.genera,
             pokemon.description,
-            DEFAULT_CAPTURE_RATE,
+            pokemon.capture_rate,
             pokemon.caught,
             pokemon.custom_name
         )
@@ -50,7 +49,7 @@ class PokemonItemConverter {
             roomPokemon.dominant_color,
             roomPokemon.genera,
             roomPokemon.description,
-            DEFAULT_CAPTURE_RATE,
+            roomPokemon.capture_rate,
             "",
             roomPokemon.is_caught,
             roomPokemon.custom_name
