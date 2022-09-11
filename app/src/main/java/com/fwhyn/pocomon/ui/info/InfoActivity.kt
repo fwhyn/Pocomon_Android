@@ -26,6 +26,7 @@ import com.fwhyn.pocomon.ui.common.dialog.CustomDialog
 import com.fwhyn.pocomon.ui.common.dialog.CustomDialogManager
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.ACTIVITY_CODE_KEY
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.CATCH_DIALOG
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.CATCH_FAILED_DIALOG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.DEFAULT_ACTIVITY_CODE
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.DELETE_DIALOG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.INFO_ACTIVITY_CODE
@@ -33,6 +34,7 @@ import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.LOADING_DIALOG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.POKEMON_KEY
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.SAVE_TAG
 import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.TAG
+import com.fwhyn.pocomon.ui.utils.UiConstant.Companion.TRY_TO_CATCH
 import com.fwhyn.pocomon.ui.utils.UiUtil.Companion.disableEditText
 import com.fwhyn.pocomon.ui.utils.UiUtil.Companion.enableEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -166,7 +168,13 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
     private fun setButtons() {
         with(viewBinding) {
             catchButton.setOnClickListener {
-                viewModel.showDialog(CATCH_DIALOG)
+                with(viewModel) {
+                    if (catch(TRY_TO_CATCH)) {
+                        showDialog(CATCH_DIALOG)
+                    } else{
+                        showDialog(CATCH_FAILED_DIALOG)
+                    }
+                }
             }
 
             delete.setOnClickListener {
@@ -255,6 +263,13 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
 
                 builder = CustomDialog.Builder().setView(view)
             }
+            CATCH_FAILED_DIALOG -> {
+                builder = CustomDialog.Builder()
+                    .setMessage(String.format(getString(R.string.catch_failed_message), pokemon.name))
+                    .setPositiveButton(getString(R.string.ok), this)
+                    .setNegativeButton(getString(R.string.cancel), this)
+                    .setNotDefaultButtonStyle(true)
+            }
             else -> {}
         }
         return builder
@@ -270,6 +285,12 @@ class InfoActivity : AppCompatActivity(), CustomDialog.DialogCallback, CustomDia
             DELETE_DIALOG -> when (whichButton) {
                 DialogInterface.BUTTON_POSITIVE -> {
                     viewModel.removeCaughtPokemon(pokemon.id, tag)
+                }
+                else -> {}
+            }
+            CATCH_FAILED_DIALOG -> when (whichButton) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    viewModel.addCaughtPokemon(pokemon, tag)
                 }
                 else -> {}
             }

@@ -43,6 +43,7 @@ class InfoViewModel(
             setJob(owner, true)
 
 //            delay(2000)
+            pokemon.custom_name = pokemon.name
             addCaughtPokemonUseCase.addCaughtPokemon(pokemon)
             caught.value = true // TODO(change to caught = return the Function)
 
@@ -63,11 +64,12 @@ class InfoViewModel(
     }
 
     fun renameCaughtPokemonName(pokemon: Pokemon, name: String, owner: String) {
-        if (!pokemon.name.equals(name)) {
+        if (pokemon.name != name) {
             viewModelScope.launch {
                 setJob(owner, true)
 
-                renameCaughtPokemonUseCase.renameCaughtPokemon(pokemon, name)
+                pokemon.custom_name = name
+                renameCaughtPokemonUseCase.renameCaughtPokemon(pokemon)
 
                 setJob(owner, false)
             }
@@ -75,10 +77,18 @@ class InfoViewModel(
         editMode.value = false
     }
 
-    fun test() {
+    fun catch(owner: String): Boolean {
+        var caught = false
+
         viewModelScope.launch {
-            setJob(TAG, true)
+            setJob(owner, true)
+
+            caught = ((0..1).shuffled()[0] == 1)
+
+            setJob(owner, false)
         }
+
+        return caught
     }
 
     fun isPokemonCaught(id : Int) : Boolean{

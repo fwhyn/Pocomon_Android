@@ -11,8 +11,10 @@ class UiConstant {
     companion object{
         const val TAG = "PocomonApp"
         const val SAVE_TAG = "save_tag"
+        const val TRY_TO_CATCH = "try_to_catch"
 
         const val CATCH_DIALOG = "catch_dialog"
+        const val CATCH_FAILED_DIALOG = "catch_failed_dialog"
         const val DELETE_DIALOG = "delete_dialog"
         const val LOADING_DIALOG = "loading_dialog"
 

@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -24,7 +25,8 @@ class PokeRecyclerViewAdapter(
     private val clickListener: (Pokemon) -> Unit,
     private var showLoadingAnimation: Boolean,
     private val isPokemonCaught: (Int) -> Boolean,
-    var lastPosition: Int?
+    var lastPosition: Int?,
+    private val customName: Boolean = false
 ) : ListAdapter<Pokemon, PokeRecyclerViewAdapter.PokemonViewHolder>(REPO_COMPARATOR) {
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Pokemon>() {
@@ -82,8 +84,7 @@ class PokeRecyclerViewAdapter(
                 }
                 setPokemonImages(pokemon)
                 pokemonNumber.text = pokemonName.context.getString(R.string.pokemon_number_format, pokemon.id)
-                pokemon.name = pokemon.name.replaceFirstChar { it.uppercase() }
-                pokemonName.text = pokemon.name
+                setName(pokemon, pokemonName)
                 pokeInfoTypeOne.text = pokemon.types[0].type.name
                 if (pokemon.types.size > 1) {
                     pokeInfoTypeTwo.visibility = View.VISIBLE
@@ -93,6 +94,15 @@ class PokeRecyclerViewAdapter(
                     pokemon.dominant_color = dominantColor
                     clickListener(pokemon)
                 }
+            }
+        }
+
+        private fun setName(pokemon: Pokemon, textView: TextView) {
+            pokemon.name = pokemon.name.replaceFirstChar { it.uppercase() }
+            if (customName && pokemon.caught) {
+                textView.text = pokemon.custom_name
+            } else {
+                textView.text = pokemon.name
             }
         }
 

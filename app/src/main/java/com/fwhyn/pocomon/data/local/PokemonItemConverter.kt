@@ -1,27 +1,28 @@
 package com.fwhyn.pocomon.data.local
 
+import com.fwhyn.pocomon.data.utils.DataConstants.Companion.DEFAULT_CAPTURE_RATE
 import com.fwhyn.pocomon.domain.model.*
 
 class PokemonItemConverter {
     // pokemon to room
+//    fun pokemonToRoomPokemon(pokemon: Pokemon): RoomPokemon {
+//        return pokemonToRoomPokemon(pokemon, pokemon.name, false)
+//    }
+//
+//    fun pokemonToRoomPokemon(pokemon: Pokemon, name: String = "x"): RoomPokemon {
+//        return pokemonToRoomPokemon(pokemon, name, true)
+//    }
+//
+//    fun pokemonToRoomPokemon(pokemon: Pokemon, isCaught: Boolean): RoomPokemon {
+//        return pokemonToRoomPokemon(pokemon, pokemon.name, isCaught)
+//    }
+
     fun pokemonToRoomPokemon(pokemon: Pokemon): RoomPokemon {
-        return pokemonToRoomPokemon(pokemon, pokemon.name, false)
-    }
-
-    fun pokemonToRoomPokemon(pokemon: Pokemon, name: String = "x"): RoomPokemon {
-        return pokemonToRoomPokemon(pokemon, name, true)
-    }
-
-    fun pokemonToRoomPokemon(pokemon: Pokemon, isCaught: Boolean): RoomPokemon {
-        return pokemonToRoomPokemon(pokemon, pokemon.name, isCaught)
-    }
-
-    private fun pokemonToRoomPokemon(pokemon: Pokemon, name: String, isCaught: Boolean = false): RoomPokemon {
         return RoomPokemon(
             pokemon.id,
             pokemon.base_experience,
             pokemon.height,
-            name,
+            pokemon.name,
             getPokemonSpritesString(pokemon.sprites),
             getPokemonStatsString(pokemon.stats),
             getPokemonTypesString(pokemon.types),
@@ -29,8 +30,9 @@ class PokemonItemConverter {
             pokemon.dominant_color,
             pokemon.genera,
             pokemon.description,
-            pokemon.capture_rate,
-            isCaught
+            DEFAULT_CAPTURE_RATE,
+            pokemon.caught,
+            pokemon.custom_name
         )
     }
 
@@ -48,7 +50,10 @@ class PokemonItemConverter {
             roomPokemon.dominant_color,
             roomPokemon.genera,
             roomPokemon.description,
-            roomPokemon.capture_rate
+            DEFAULT_CAPTURE_RATE,
+            "",
+            roomPokemon.is_caught,
+            roomPokemon.custom_name
         )
     }
 

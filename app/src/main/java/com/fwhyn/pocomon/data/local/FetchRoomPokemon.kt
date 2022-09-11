@@ -7,7 +7,8 @@ class FetchRoomPokemon(private val pokemonDao: RoomPokemonDao) : LocalDataInterf
     private val pokemonItemConverter = PokemonItemConverter()
 
     override suspend fun addCaughtPokemon(pokemon: Pokemon): Boolean {
-        pokemonDao.addCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon, true)
+        pokemon.caught = true
+        pokemonDao.addCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon)
         )
         return true
     }
@@ -19,7 +20,7 @@ class FetchRoomPokemon(private val pokemonDao: RoomPokemonDao) : LocalDataInterf
     }
 
     override suspend fun modifyCaughtPokemon(pokemon: Pokemon): Boolean {
-        pokemonDao.modifyCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon, true))
+        pokemonDao.modifyCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon))
 
         return true
     }
@@ -30,8 +31,8 @@ class FetchRoomPokemon(private val pokemonDao: RoomPokemonDao) : LocalDataInterf
         return true
     }
 
-    override suspend fun renameCaughtPokemon(pokemon: Pokemon, name: String): Boolean {
-        pokemonDao.modifyCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon, name))
+    override suspend fun renameCaughtPokemon(pokemon: Pokemon): Boolean {
+        pokemonDao.modifyCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon))
 
         return true
     }

@@ -43,7 +43,8 @@ class CaughtFragment : Fragment() {
             clickListener = { UiUtil.startInfoActivity(requireActivity(), launcher, it, CAUGHT_ACTIVITY_CODE) },
             false,
             isPokemonCaught = { return@PokeRecyclerViewAdapter viewModel.isPokemonCaught(it) },
-            null)
+            null,
+            true)
     }
 
     private fun setupRecyclerView(adapter: PokeRecyclerViewAdapter, viewBinding: FragmentCaughtBinding) {

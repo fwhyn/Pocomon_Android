@@ -1,5 +1,6 @@
 package com.fwhyn.pocomon.domain.model
 
+import com.fwhyn.pocomon.data.utils.DataConstants.Companion.DEFAULT_CAPTURE_RATE
 import java.io.Serializable
 
 data class Pokemon(
@@ -14,6 +15,10 @@ data class Pokemon(
     var dominant_color: Int?,
     var genera: String,
     var description: String,
-    var capture_rate: Int,
-    var url: String? = ""
-) : Serializable
+    var capture_rate: Int = DEFAULT_CAPTURE_RATE,
+    var url: String? = "",
+    var caught: Boolean = false,
+    var custom_name: String
+) : Serializable {
+
+}
