@@ -36,14 +36,14 @@ class FetchRoomPokemon(private val pokemonDao: RoomPokemonDao) : LocalDataInterf
         return true
     }
 
-    override fun getCaughtPokemonList(): List<Pokemon> {
+    override suspend fun getCaughtPokemonList(): List<Pokemon> {
         return pokemonDao.readCaughtItems().map {
             pokemonItemConverter.roomPokemonToPokemon(it)
         }
     }
 
     override fun getAllPokemonList(): List<Pokemon> {
-        return pokemonDao.readCaughtItems().map {
+        return pokemonDao.readAllItems().map {
             pokemonItemConverter.roomPokemonToPokemon(it)
         }
     }

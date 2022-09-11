@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.fwhyn.pocomon.data.utils.DataConstants
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.domain.model.PokemonResults
+import com.fwhyn.pocomon.domain.usecases.GetAllLocalPokemonUseCase
 import com.fwhyn.pocomon.domain.usecases.GetAllPokemonNamesUseCase
 import com.fwhyn.pocomon.domain.usecases.GetIsPokemonCaughtUseCase
 import com.fwhyn.pocomon.domain.usecases.GetPokemonUseCase
@@ -19,13 +20,18 @@ import org.koin.core.component.KoinComponent
 class HomeViewModel(
     private val getPokemonUseCase: GetPokemonUseCase,
     private val getIsPokemonCaughtUseCase: GetIsPokemonCaughtUseCase,
-    private val getAllPokemonNamesUseCase: GetAllPokemonNamesUseCase
+    private val getAllPokemonNamesUseCase: GetAllPokemonNamesUseCase,
+    private val getAllLocalPokemonUseCase: GetAllLocalPokemonUseCase
 ) : ViewModel(), KoinComponent {
     private var coroutineExceptionHandler: CoroutineExceptionHandler
     private var job: Job = Job()
 
     private val allLoadedPokemons: MutableList<Pokemon> = mutableListOf()
     val allPokemonsToLoad: MutableList<Pokemon> = mutableListOf()
+
+    private val _myPokemonNamesList: MutableLiveData<Result<MutableList<Pokemon>>> = MutableLiveData()
+    val myPokemonNamesList: LiveData<Result<MutableList<Pokemon>>>
+        get() = _myPokemonNamesList
 
     private val _myPokemons: MutableLiveData<Result<MutableList<Pokemon>>> = MutableLiveData()
     val myPokemons: LiveData<Result<MutableList<Pokemon>>>
@@ -41,14 +47,28 @@ class HomeViewModel(
         getAllPokemonNames()
     }
 
-    private fun getAllPokemonNames() {
+    fun getAllPokemonNames() {
         cancelJobIfRunning()
         job = viewModelScope.launch(coroutineExceptionHandler) {
-            // get from https://pokeapi.co/api/v2/TOTAL_POKEMONS
-            val pokemonResults =getAllPokemonNamesUseCase.getAllPokemonNames(DataConstants.TOTAL_POKEMONS)
+            _myPokemonNamesList.value = Result.Loading
 
+            allPokemonsToLoad.clear()
+            allLoadedPokemons.clear()
+            // get from https://pokeapi.co/api/v2/TOTAL_POKEMONS
+            val pokemonResults = getAllPokemonNamesUseCase.getAllPokemonNames(DataConstants.TOTAL_POKEMONS)
             allPokemonsToLoad.addAll(convertUrlIoId(pokemonResults))
-            loadPokemon(getPokemonsToLoad(allPokemonsToLoad))
+
+            // get saved local data
+            var localPokemonData: List<Pokemon>
+            launch {
+                localPokemonData = getAllLocalPokemonUseCase.getAllLocalPokemon()
+                allLoadedPokemons.addAll(localPokemonData)
+            }
+
+            val limitData = getLimitedToLoad( 0)
+            loadPokemon(limitData)
+
+            _myPokemonNamesList.value = Result.Success(allPokemonsToLoad)
         }
     }
 
@@ -69,11 +89,13 @@ class HomeViewModel(
         return pokemons
     }
 
-    private fun getPokemonsToLoad(allToLoadList: MutableList<Pokemon>): MutableList<Pokemon> {
+    fun getLimitedToLoad(firstIndex: Int): MutableList<Pokemon> {
         val toLoadList: MutableList<Pokemon> = mutableListOf()
+        var i = firstIndex
 
-        for (i in 0 until DataConstants.POKEMONS_LOAD_LIMIT) {
-            toLoadList.add(allToLoadList[i])
+        while (toLoadList.size < DataConstants.POKEMONS_LOAD_LIMIT && i < DataConstants.TOTAL_POKEMONS) {
+            toLoadList.add(allPokemonsToLoad[i])
+            i++
         }
 
         return toLoadList

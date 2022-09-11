@@ -55,10 +55,15 @@ class HomeFragment : Fragment() {
     private fun setupViews() {
         showLoadingAnimation()
         setupAdapter()
-        setupRecycler()
     }
 
     private fun setupObservers() {
+        viewModel.myPokemonNamesList.observe(viewLifecycleOwner) {
+            if (it is HomeViewModel.Result.Success && shownPokemon != 0) {
+//                setupAdapter(it.value.size)
+            }
+        }
+
         viewModel.myPokemons.observe(viewLifecycleOwner) {
             when (it) {
                 is HomeViewModel.Result.Failure -> onLoadingFailure()
@@ -76,6 +81,9 @@ class HomeFragment : Fragment() {
             recyclerView.visibility = View.VISIBLE
         }
 
+        // update last position
+        adapter.lastPosition = viewModel.allPokemonsToLoad.size
+        // add pokemon list to adapter
         adapter.submitList(pokemonList.toMutableList())
         shownPokemon = pokemonList.size
 
@@ -104,17 +112,19 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupAdapter() {
+    private fun setupAdapter(lastPosition: Int = DataConstants.TOTAL_POKEMONS) {
         adapter = PokeRecyclerViewAdapter(
             clickListener = { UiUtil.startInfoActivity(requireActivity(), launcher, it) },
             true,
             isPokemonCaught = { return@PokeRecyclerViewAdapter viewModel.isPokemonCaught(it) },
-            lastPosition = viewModel.allPokemonsToLoad.size)
+            lastPosition)
+
+        setupRecycler(adapter)
     }
 
-    private fun setupRecycler() {
+    private fun setupRecycler(recyclerViewAdapter: PokeRecyclerViewAdapter) {
         with(viewBinding) {
-            recyclerView.adapter = adapter
+            recyclerView.adapter = recyclerViewAdapter
 
             recyclerView.layoutManager =
                 GridLayoutManager(context, resources.getInteger(R.integer.grid_column_count))
@@ -145,18 +155,13 @@ class HomeFragment : Fragment() {
         if (!viewBinding.recyclerView.canScrollVertically(1) && !loading && shownPokemon >= DataConstants.POKEMONS_LOAD_LIMIT) {
             toLoadList.clear()
             with (viewModel) {
-                if (allPokemonsToLoad.size - shownPokemon >= DataConstants.POKEMONS_DISPLAY_LIMIT) {
-                    for (i in shownPokemon until shownPokemon + DataConstants.POKEMONS_LOAD_LIMIT) {
-                        toLoadList.add(allPokemonsToLoad[i])
-                    }
-                    shownPokemon += DataConstants.POKEMONS_LOAD_LIMIT
-                } else if (shownPokemon < allPokemonsToLoad.size) {
-                    for (i in shownPokemon until allPokemonsToLoad.size) {
-                        toLoadList.add(allPokemonsToLoad[i])
-                    }
-                    shownPokemon = allPokemonsToLoad.size
+                val limitLoad = getLimitedToLoad(shownPokemon)
+                // if no more item to load
+                if (limitLoad.size != 0) {
+                    toLoadList.addAll(limitLoad)
+                    shownPokemon += toLoadList.size
+                    loadPokemon(toLoadList)
                 }
-                loadPokemon(toLoadList)
             }
         }
     }
@@ -167,12 +172,13 @@ class HomeFragment : Fragment() {
                 viewBinding.noInternetLayout.visibility = View.GONE
             }
 
-            if (toLoadList.isNotEmpty()) {
+            if (toLoadList.isNotEmpty() && !loading) {
                 viewModel.loadPokemon(toLoadList)
                 activity?.runOnUiThread { showLoadingAnimation() }
                 failureFlag = false
             } else {
                 // TODO("if pokemon list empty")
+//                viewModel.getAllPokemonNames()
             }
         }
     }

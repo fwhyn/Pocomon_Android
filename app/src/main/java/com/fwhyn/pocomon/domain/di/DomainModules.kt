@@ -16,4 +16,5 @@ val domainModule = module {
     factory { GetIsPokemonSavedUseCase(get()) }
     factory { GetAllPokemonNamesUseCase(get()) }
     factory { GetAllPokemonOfTypeUseCase(get()) }
+    factory { GetAllLocalPokemonUseCase(get()) }
 }

@@ -24,7 +24,7 @@ class PokeRecyclerViewAdapter(
     private val clickListener: (Pokemon) -> Unit,
     private var showLoadingAnimation: Boolean,
     private val isPokemonCaught: (Int) -> Boolean,
-    private val lastPosition: Int?
+    var lastPosition: Int?
 ) : ListAdapter<Pokemon, PokeRecyclerViewAdapter.PokemonViewHolder>(REPO_COMPARATOR) {
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Pokemon>() {
@@ -146,9 +146,19 @@ class PokeRecyclerViewAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return if (lastPosition != null) {
-            if (position == lastPosition) 3 else if (position == currentList.size) 2 else 1
+            if (position == lastPosition) {
+                3
+            } else if (position == currentList.size) {
+                2
+            } else {
+                1
+            }
         } else {
-            if (position == currentList.size) 2 else 1
+            if (position == currentList.size) {
+                2
+            } else {
+                1
+            }
         }
     }
 

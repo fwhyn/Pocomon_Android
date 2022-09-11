@@ -8,7 +8,7 @@ interface LocalDataInterface {
     suspend fun addPokemon(pokemon: Pokemon): Boolean
     suspend fun modifyCaughtPokemon(pokemon: Pokemon): Boolean
     suspend fun renameCaughtPokemon(pokemon: Pokemon, name: String): Boolean
-    fun getCaughtPokemonList(): List<Pokemon>
+    suspend fun getCaughtPokemonList(): List<Pokemon>
     fun getAllPokemonList(): List<Pokemon>
     fun getSinglePokemon(id: Int): Pokemon
     fun isPokemonCaught(id: Int): Boolean

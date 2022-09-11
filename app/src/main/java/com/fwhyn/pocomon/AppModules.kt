@@ -9,7 +9,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    viewModel { HomeViewModel(get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { CaughtViewModel(get(), get(), get(), get()) }
     viewModel { InfoViewModel(get(), get(), get(), get(), get()) }
     viewModel { SearchViewModel(get(), get(), get(), get(), get()) }
