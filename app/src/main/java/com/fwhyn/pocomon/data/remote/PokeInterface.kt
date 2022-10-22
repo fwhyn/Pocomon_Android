@@ -1,4 +1,4 @@
-package com.fwhyn.pocomon.data.repository
+package com.fwhyn.pocomon.data.remote
 
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.domain.model.PokemonResults
