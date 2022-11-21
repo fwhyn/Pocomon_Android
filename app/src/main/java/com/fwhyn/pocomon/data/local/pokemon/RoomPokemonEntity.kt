@@ -1,11 +1,11 @@
-package com.fwhyn.pocomon.data.local
+package com.fwhyn.pocomon.data.local.pokemon
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.fwhyn.pocomon.data.utils.DataConstants.Companion.DEFAULT_CAPTURE_RATE
 
 @Entity(tableName = "pokemon_list")
-data class RoomPokemon(
+data class RoomPokemonEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val base_experience: Int,

@@ -1,65 +1,62 @@
-package com.fwhyn.pocomon.data.repository
+package com.fwhyn.pocomon.data.local.pokemon
 
-import com.fwhyn.pocomon.data.local.PokemonItemConverter
-import com.fwhyn.pocomon.data.local.RoomPokemonDao
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.domain.api.LocalDataInterface
+import com.fwhyn.pocomon.data.repository.LocalDataRepository
 
-class LocalRepository(private val pokemonDao: RoomPokemonDao) : LocalDataInterface {
+class PokemonLocalDataSource(private val roomPokemonDao: RoomPokemonDao) : LocalDataRepository {
     private val pokemonItemConverter = PokemonItemConverter()
 
     override suspend fun addCaughtPokemon(pokemon: Pokemon): Boolean {
         pokemon.caught = true
-        pokemonDao.addCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon)
-        )
+        roomPokemonDao.addCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon))
         return true
     }
 
     override suspend fun removeCaughtPokemon(id: Int): Boolean {
-        pokemonDao.removePokemonItem(id)
+        roomPokemonDao.removePokemonItem(id)
 
         return true
     }
 
     override suspend fun modifyCaughtPokemon(pokemon: Pokemon): Boolean {
-        pokemonDao.modifyCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon))
+        roomPokemonDao.modifyCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon))
 
         return true
     }
 
     override suspend fun addPokemon(pokemon: Pokemon): Boolean {
-        pokemonDao.addRoomPokemonItem(pokemonItemConverter.pokemonToRoomPokemon(pokemon))
+        roomPokemonDao.addRoomPokemonItem(pokemonItemConverter.pokemonToRoomPokemon(pokemon))
 
         return true
     }
 
     override suspend fun renameCaughtPokemon(pokemon: Pokemon): Boolean {
-        pokemonDao.modifyCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon))
+        roomPokemonDao.modifyCaughtPokemon(pokemonItemConverter.pokemonToRoomPokemon(pokemon))
 
         return true
     }
 
     override suspend fun getCaughtPokemonList(): List<Pokemon> {
-        return pokemonDao.readCaughtItems().map {
+        return roomPokemonDao.readCaughtItems().map {
             pokemonItemConverter.roomPokemonToPokemon(it)
         }
     }
 
     override fun getAllPokemonList(): List<Pokemon> {
-        return pokemonDao.readAllItems().map {
+        return roomPokemonDao.readAllItems().map {
             pokemonItemConverter.roomPokemonToPokemon(it)
         }
     }
 
     override fun getSinglePokemon(id: Int): Pokemon {
-        return pokemonItemConverter.roomPokemonToPokemon(pokemonDao.readSingleItem(id))
+        return pokemonItemConverter.roomPokemonToPokemon(roomPokemonDao.readSingleItem(id))
     }
 
     override fun isPokemonCaught(id: Int): Boolean {
-        return pokemonDao.isPokemonCaught(id)
+        return roomPokemonDao.isPokemonCaught(id)
     }
 
     override fun isPokemonSaved(id: Int): Boolean {
-        return pokemonDao.isPokemonSaved(id)
+        return roomPokemonDao.isPokemonSaved(id)
     }
 }

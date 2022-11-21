@@ -1,26 +1,26 @@
-package com.fwhyn.pocomon.data.repository
+package com.fwhyn.pocomon.data.remote.pokemon
 
 import com.fwhyn.pocomon.data.remote.RetrofitInstance
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.domain.model.PokemonResults
 import com.fwhyn.pocomon.domain.model.PokemonTypeResults
 import com.fwhyn.pocomon.domain.model.Species
-import com.fwhyn.pocomon.domain.api.RepositoryDataInterface
+import com.fwhyn.pocomon.data.repository.RemoteDataRepository
 
-class RemoteRepository : RepositoryDataInterface {
+class PokeApiDataSource : RemoteDataRepository {
     override suspend fun getPokemon(id: Int): Pokemon {
-        return RetrofitInstance.api.getPokemon(id)
+        return RetrofitInstance.pokeApi.getPokemon(id)
     }
 
     override suspend fun getSpecies(id: Int): Species {
-        return RetrofitInstance.api.getSpecies(id)
+        return RetrofitInstance.pokeApi.getSpecies(id)
     }
 
     override suspend fun getPokemonList(limit: Int): PokemonResults {
-        return RetrofitInstance.api.getPokemonList(limit)
+        return RetrofitInstance.pokeApi.getPokemonList(limit)
     }
 
     override suspend fun getPokemonTypeList(type : String) : PokemonTypeResults {
-        return RetrofitInstance.api.getPokemonTypeList(type)
+        return RetrofitInstance.pokeApi.getPokemonTypeList(type)
     }
 }

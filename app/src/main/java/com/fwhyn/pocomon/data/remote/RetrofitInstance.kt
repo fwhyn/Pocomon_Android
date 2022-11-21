@@ -1,5 +1,6 @@
 package com.fwhyn.pocomon.data.remote
 
+import com.fwhyn.pocomon.data.remote.pokemon.PokeApiInterface
 import com.fwhyn.pocomon.data.utils.DataConstants.Companion.BASE_URL
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -12,7 +13,7 @@ object RetrofitInstance {
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private val retrofit by lazy{
+    private val retrofitPokeApi by lazy{
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -20,7 +21,7 @@ object RetrofitInstance {
             .build()
     }
 
-    val api : PokeInterface by lazy{
-        retrofit.create(PokeInterface::class.java)
+    val pokeApi : PokeApiInterface by lazy{
+        retrofitPokeApi.create(PokeApiInterface::class.java)
     }
 }

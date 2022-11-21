@@ -1,4 +1,4 @@
-package com.fwhyn.pocomon.data.remote
+package com.fwhyn.pocomon.data.remote.pokemon
 
 import com.fwhyn.pocomon.domain.model.Pokemon
 import com.fwhyn.pocomon.domain.model.PokemonResults
@@ -8,7 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface PokeInterface {
+interface PokeApiInterface {
     @GET("pokemon/{id}")
     suspend fun getPokemon(
         @Path("id") id: Int

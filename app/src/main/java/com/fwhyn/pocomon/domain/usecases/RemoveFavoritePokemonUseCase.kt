@@ -1,9 +1,9 @@
 package com.fwhyn.pocomon.domain.usecases
 
-import com.fwhyn.pocomon.domain.api.LocalDataInterface
+import com.fwhyn.pocomon.data.repository.LocalDataRepository
 
-class RemoveCaughtPokemonUseCase(private val localDataInterface: LocalDataInterface) {
+class RemoveCaughtPokemonUseCase(private val localDataRepository: LocalDataRepository) {
     suspend fun removeCaughtPokemon(id: Int) {
-        localDataInterface.removeCaughtPokemon(id)
+        localDataRepository.removeCaughtPokemon(id)
     }
 }

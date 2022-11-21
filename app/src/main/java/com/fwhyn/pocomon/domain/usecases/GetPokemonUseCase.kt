@@ -4,10 +4,10 @@ import com.fwhyn.pocomon.data.utils.DataConstants.Companion.DEFAULT_CAPTURE_RATE
 import com.fwhyn.pocomon.domain.model.FlavorTextEntry
 import com.fwhyn.pocomon.domain.model.Genera
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.domain.api.RepositoryDataInterface
+import com.fwhyn.pocomon.data.repository.RemoteDataRepository
 
 class GetPokemonUseCase(
-    private val repository: RepositoryDataInterface,
+    private val repository: RemoteDataRepository,
     private val getSinglePokemonUseCase: GetSinglePokemonUseCase,
     private val getIsPokemonSavedUseCase: GetIsPokemonSavedUseCase
 ) {

@@ -1,8 +1,8 @@
-package com.fwhyn.pocomon.domain.api
+package com.fwhyn.pocomon.data.repository
 
 import com.fwhyn.pocomon.domain.model.Pokemon
 
-interface LocalDataInterface {
+interface LocalDataRepository {
     suspend fun addCaughtPokemon(pokemon: Pokemon): Boolean
     suspend fun removeCaughtPokemon(id: Int): Boolean
     suspend fun addPokemon(pokemon: Pokemon): Boolean

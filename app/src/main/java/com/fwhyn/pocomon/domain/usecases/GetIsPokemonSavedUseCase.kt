@@ -1,9 +1,9 @@
 package com.fwhyn.pocomon.domain.usecases
 
-import com.fwhyn.pocomon.domain.api.LocalDataInterface
+import com.fwhyn.pocomon.data.repository.LocalDataRepository
 
-class GetIsPokemonSavedUseCase(private val localDataInterface: LocalDataInterface) {
+class GetIsPokemonSavedUseCase(private val localDataRepository: LocalDataRepository) {
     fun isPokemonSaved(id: Int): Boolean {
-        return localDataInterface.isPokemonSaved(id)
+        return localDataRepository.isPokemonSaved(id)
     }
 }

@@ -1,23 +1,11 @@
-package com.fwhyn.pocomon.data.local
+package com.fwhyn.pocomon.data.local.pokemon
 
 import com.fwhyn.pocomon.domain.model.*
 
 class PokemonItemConverter {
     // pokemon to room
-//    fun pokemonToRoomPokemon(pokemon: Pokemon): RoomPokemon {
-//        return pokemonToRoomPokemon(pokemon, pokemon.name, false)
-//    }
-//
-//    fun pokemonToRoomPokemon(pokemon: Pokemon, name: String = "x"): RoomPokemon {
-//        return pokemonToRoomPokemon(pokemon, name, true)
-//    }
-//
-//    fun pokemonToRoomPokemon(pokemon: Pokemon, isCaught: Boolean): RoomPokemon {
-//        return pokemonToRoomPokemon(pokemon, pokemon.name, isCaught)
-//    }
-
-    fun pokemonToRoomPokemon(pokemon: Pokemon): RoomPokemon {
-        return RoomPokemon(
+    fun pokemonToRoomPokemon(pokemon: Pokemon): RoomPokemonEntity {
+        return RoomPokemonEntity(
             pokemon.id,
             pokemon.base_experience,
             pokemon.height,
@@ -36,23 +24,23 @@ class PokemonItemConverter {
     }
 
     // room to pokemon
-    fun roomPokemonToPokemon(roomPokemon: RoomPokemon) : Pokemon {
+    fun roomPokemonToPokemon(roomPokemonEntity: RoomPokemonEntity) : Pokemon {
         return Pokemon(
-            roomPokemon.base_experience,
-            roomPokemon.height,
-            roomPokemon.id,
-            roomPokemon.name,
-            getPokemonSprites(roomPokemon.sprites),
-            getPokemonStats(roomPokemon.stats),
-            getPokemonTypes(roomPokemon.types),
-            roomPokemon.weight,
-            roomPokemon.dominant_color,
-            roomPokemon.genera,
-            roomPokemon.description,
-            roomPokemon.capture_rate,
+            roomPokemonEntity.base_experience,
+            roomPokemonEntity.height,
+            roomPokemonEntity.id,
+            roomPokemonEntity.name,
+            getPokemonSprites(roomPokemonEntity.sprites),
+            getPokemonStats(roomPokemonEntity.stats),
+            getPokemonTypes(roomPokemonEntity.types),
+            roomPokemonEntity.weight,
+            roomPokemonEntity.dominant_color,
+            roomPokemonEntity.genera,
+            roomPokemonEntity.description,
+            roomPokemonEntity.capture_rate,
             "",
-            roomPokemon.is_caught,
-            roomPokemon.custom_name
+            roomPokemonEntity.is_caught,
+            roomPokemonEntity.custom_name
         )
     }
 

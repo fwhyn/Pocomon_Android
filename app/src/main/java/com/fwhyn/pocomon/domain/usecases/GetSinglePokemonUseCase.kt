@@ -1,8 +1,8 @@
 package com.fwhyn.pocomon.domain.usecases
 
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.domain.api.LocalDataInterface
+import com.fwhyn.pocomon.data.repository.LocalDataRepository
 
-class GetSinglePokemonUseCase(private val localDataInterface: LocalDataInterface) {
-    fun getSinglePokemon(id: Int): Pokemon = localDataInterface.getSinglePokemon(id)
+class GetSinglePokemonUseCase(private val localDataRepository: LocalDataRepository) {
+    fun getSinglePokemon(id: Int): Pokemon = localDataRepository.getSinglePokemon(id)
 }

@@ -1,10 +1,10 @@
 package com.fwhyn.pocomon.domain.usecases
 
 import com.fwhyn.pocomon.domain.model.Pokemon
-import com.fwhyn.pocomon.domain.api.LocalDataInterface
+import com.fwhyn.pocomon.data.repository.LocalDataRepository
 
-class ModifyCaughtPokemonUseCase(private val localDataInterface: LocalDataInterface) {
+class ModifyCaughtPokemonUseCase(private val localDataRepository: LocalDataRepository) {
     suspend fun modifyCaughtPokemon(pokemon: Pokemon) {
-        localDataInterface.modifyCaughtPokemon(pokemon)
+        localDataRepository.modifyCaughtPokemon(pokemon)
     }
 }
